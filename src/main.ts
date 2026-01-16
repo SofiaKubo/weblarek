@@ -1,8 +1,8 @@
 import './scss/styles.scss';
 
-import { ProductsModel } from './models/ProductsModel';
-import { BasketModel } from './models/BasketModel';
-import { BuyerModel } from './models/BuyerModel';
+import { ProductsModel } from './components/models/ProductsModel';
+import { BasketModel } from './components/models/BasketModel';
+import { BuyerModel } from './components/models/BuyerModel';
 
 import { apiProducts } from './utils/data';
 

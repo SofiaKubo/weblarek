@@ -1,5 +1,5 @@
-import { TPayment } from '../types/index';
-import { IBuyer } from '../types/index';
+import { TPayment } from '../../types/index';
+import { IBuyer } from '../../types/index';
 export class BuyerModel {
   private payment: TPayment | null;
   private email: string;
