@@ -29,12 +29,15 @@ export interface ProductsResponse {
 }
 
 export type OrderRequest = {
-  buyer: IBuyer;
-  products: string[];
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+  items: string[];
   total: number;
 };
 
 export type OrderResponse = {
-  orderId: string;
-  status: 'success' | 'failed';
+  id: string;
+  total: number;
 };
