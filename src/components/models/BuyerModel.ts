@@ -47,23 +47,16 @@ export class BuyerModel {
   validate(): Partial<Record<keyof IBuyer, string>> {
     const errors: Partial<Record<keyof IBuyer, string>> = {};
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?[1-9]\d{9,14}$/;
-
     if (!this.payment) {
       errors.payment = 'Payment method is required';
     }
     if (!this.email) {
       errors.email = 'Email is required';
-    } else if (!emailRegex.test(this.email)) {
-      errors.email = 'Invalid email format';
     }
     if (!this.phone) {
-      errors.phone = 'Phone number is required';
-    } else if (!phoneRegex.test(this.phone)) {
-      errors.phone = 'Invalid phone number format';
+      errors.phone = 'Phone is required';
     }
-    if (!this.address || this.address.trim().length < 5) {
+    if (!this.address) {
       errors.address = 'Address is required';
     }
     return errors;
