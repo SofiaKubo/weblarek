@@ -23,6 +23,10 @@ export interface IBuyer {
   phone: string;
   address: string;
 }
+export interface ProductsResponse {
+  total: number;
+  items: IProduct[];
+}
 
 export type OrderRequest = {
   buyer: IBuyer;

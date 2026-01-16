@@ -1,11 +1,16 @@
-import { IApi, IProduct, OrderRequest, OrderResponse } from '../types';
-
+import {
+  IApi,
+  IProduct,
+  OrderRequest,
+  OrderResponse,
+  ProductsResponse,
+} from '../types';
 export class WebLarekApi {
   constructor(private api: IApi) {}
 
   getProducts(): Promise<IProduct[]> {
     return this.api
-      .get<{ items: IProduct[] }>('/product')
+      .get<ProductsResponse>('/product')
       .then((data) => data.items);
   }
 
