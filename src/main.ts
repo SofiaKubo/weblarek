@@ -6,6 +6,10 @@ import { BuyerModel } from './models/BuyerModel';
 
 import { apiProducts } from './utils/data';
 
+import { API_URL } from './utils/constants';
+import { Api } from './components/base/Api';
+import { WebLarekApi } from './api/WebLarekApi';
+
 /* =============================== PRODUCTS MODEL =============================== */
 
 console.log('=== ProductsModel ===');
@@ -58,6 +62,7 @@ basketModel.clear();
 console.log('Товары в корзине после очистки:', basketModel.getItems());
 
 /* =============================== BUYER MODEL =============================== */
+
 console.log('=== BuyerModel ===');
 
 const buyerModel = new BuyerModel();
@@ -83,3 +88,23 @@ console.log('Ошибки валидации:', buyerModel.validate());
 
 buyerModel.clear();
 console.log('Данные после очистки:', buyerModel.getData());
+
+/* =============================== INTEGRATION TEST WITH API =============================== */
+
+async function run() {
+  console.log('=== API → ProductsModel ===');
+
+  const api = new Api(API_URL);
+  const webLarekApi = new WebLarekApi(api);
+  const productsModel = new ProductsModel();
+
+  const products = await webLarekApi.getProducts();
+  productsModel.setItems(products);
+
+  console.log('Каталог товаров загружен с сервера:', productsModel.getItems());
+  console.log('Количество товаров:', productsModel.getItems().length);
+}
+
+run().catch((error) => {
+  console.error('Ошибка при загрузке каталога:', error);
+});
