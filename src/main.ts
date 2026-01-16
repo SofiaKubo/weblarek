@@ -10,7 +10,7 @@ productsModel.setItems(apiProducts.items);
 console.log('Каталог товаров загружен:', productsModel.getItems());
 
 productsModel.getItems().forEach(({ id, title, price }) => {
-  console.log(`Товар: id=${id}, title=${title}, price=${price}`);
+  console.log(`Товар: id = ${id}, title = ${title}, price = ${price}`);
 });
 
 const selectedProduct = productsModel.getItemById(
