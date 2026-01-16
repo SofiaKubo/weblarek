@@ -4,7 +4,7 @@ export class BuyerModel {
     private payment: TPayment | null;
     private email: string;
     private phone: string;
-    private address: string;  
+    private address: string;
 
     constructor() {
         this.payment = null;
@@ -13,7 +13,7 @@ export class BuyerModel {
         this.address = '';
     }
 
-    setData(data: Partial<IBuyer>): void {  
+    setData(data: Partial<IBuyer>): void {
         if (data.payment !== undefined) {
             this.payment = data.payment;
         }
@@ -22,7 +22,7 @@ export class BuyerModel {
         }
         if (data.phone !== undefined) {
             this.phone = data.phone;
-        } 
+        }
         if (data.address !== undefined) {
             this.address = data.address;
         }
@@ -30,7 +30,7 @@ export class BuyerModel {
 
     getData(): IBuyer {
         return {
-            payment: this.payment,  
+            payment: this.payment,
             email: this.email,
             phone: this.phone,
             address: this.address,
@@ -45,19 +45,27 @@ export class BuyerModel {
     }
 
     validate(): Partial<Record<keyof IBuyer, string>> {
-        const errors: Partial<Record<keyof IBuyer, string>> = {};
-        if (!this.email || !/\S+@\S+\.\S+/.test(this.email)) {
-            errors.email = 'Invalid email format';
-        }
-        if (!this.phone || !/^\+?[1-9]\d{1,14}$/.test(this.phone)) {
-            errors.phone = 'Invalid phone number format';
-        } 
-        if (!this.address) {
-            errors.address = 'Address cannot be empty';
-        }
-        if (!this.payment) {
-            errors.payment = 'Payment method is required';
-        }
-        return errors;
-    }
+  const errors: Partial<Record<keyof IBuyer, string>> = {};
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?[1-9]\d{9,14}$/;
+
+  if (!this.email) {
+    errors.email = 'Email is required';
+  } else if (!emailRegex.test(this.email)) {
+    errors.email = 'Invalid email format';
   }
+  if (!this.phone) {
+    errors.phone = 'Phone number is required';
+  } else if (!phoneRegex.test(this.phone)) {
+    errors.phone = 'Invalid phone number format';
+  }
+  if (!this.address || this.address.trim().length < 5) {
+    errors.address = 'Address is required';
+  }
+  if (!this.payment) {
+    errors.payment = 'Payment method is required';
+  }
+  return errors;
+ }
+}
