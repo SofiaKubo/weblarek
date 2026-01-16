@@ -4,7 +4,9 @@ export class WebLarekApi {
   constructor(private api: IApi) {}
 
   getProducts(): Promise<IProduct[]> {
-    return this.api.get<IProduct[]>('/product/');
+    return this.api
+      .get<{ items: IProduct[] }>('/product')
+      .then((data) => data.items);
   }
 
   postOrder(data: OrderRequest): Promise<OrderResponse> {
