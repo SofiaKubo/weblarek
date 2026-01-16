@@ -209,42 +209,48 @@ interface ProductsResponse {
 
 Тип описывает объект заказа, отправляемый на сервер.
 
-Заказ формируется на основе:
-
-- данных покупателя;
-- выбранных товаров в корзине;
-- итоговой стоимости заказа.
+Заказ формируется из данных покупателя, списка выбранных товаров и общей стоимости заказа.
+Структура объекта соответствует формату API сервера.
 
 ##### Поля:
 
-`buyer: IBuyer` — данные покупателя;
+`payment: TPayment` — выбранный способ оплаты;
 
-`products: string[]` — массив идентификаторов выбранных товаров;
+`email: string` — email покупателя;
+
+`phone: string` — телефон покупателя;
+
+`address: string` — адрес доставки;
+
+`items: string[]` — массив идентификаторов выбранных товаров;
 
 `total: number` — общая стоимость заказа.
 
 ```ts
 export type OrderRequest = {
-  buyer: IBuyer;
-  products: string[];
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+  items: string[];
   total: number;
 };
 ```
 
 ### OrderResponse
 
-Тип описывает ответ сервера после обработки заказа.
+Тип описывает ответ сервера после успешного оформления заказа.
 
 ##### Поля:
 
-`orderId: string` — уникальный идентификатор оформленного заказа;
+`id: string` — уникальный идентификатор оформленного заказа;
 
-`status: 'success' | 'failed'` — статус обработки заказа.
+`total: number` — итоговая стоимость оформленного заказа.
 
 ```ts
 export type OrderResponse = {
-  orderId: string;
-  status: 'success' | 'failed';
+  id: string;
+  total: number;
 };
 ```
 
