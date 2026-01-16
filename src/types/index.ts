@@ -23,3 +23,14 @@ export interface IBuyer {
   phone: string;
   address: string;
 }
+
+export type OrderRequest = {
+  buyer: IBuyer;
+  products: string[];
+  total: number;
+};
+
+export type OrderResponse = {
+  orderId: string;
+  status: 'success' | 'failed';
+};
