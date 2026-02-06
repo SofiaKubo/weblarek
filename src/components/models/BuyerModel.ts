@@ -1,12 +1,13 @@
 import { TPayment } from '../../types/index';
 import { IBuyer } from '../../types/index';
+import { IEvents } from '../../components/base/Events';
 export class BuyerModel {
   private payment: TPayment | null;
   private email: string;
   private phone: string;
   private address: string;
 
-  constructor() {
+  constructor(private events: IEvents) {
     this.payment = null;
     this.email = '';
     this.phone = '';
@@ -26,6 +27,8 @@ export class BuyerModel {
     if (data.address !== undefined) {
       this.address = data.address;
     }
+
+    this.emitChange();
   }
 
   getData(): IBuyer {
@@ -42,6 +45,8 @@ export class BuyerModel {
     this.email = '';
     this.phone = '';
     this.address = '';
+
+    this.emitChange();
   }
 
   validate(): Partial<Record<keyof IBuyer, string>> {
@@ -60,5 +65,11 @@ export class BuyerModel {
       errors.address = 'Address is required';
     }
     return errors;
+  }
+
+  private emitChange(): void {
+    this.events.emit('buyer:changed', {
+      buyer: this.getData(),
+    });
   }
 }
