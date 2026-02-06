@@ -13,7 +13,7 @@ export class ProductsModel {
   setItems(items: IProduct[]): void {
     this.items = items;
 
-    this.events.emit('products:changed', {
+    this.events.emit('catalog:changed', {
       items: this.items,
     });
   }
