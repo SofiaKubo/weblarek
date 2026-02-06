@@ -3,8 +3,8 @@ import { ensureElement } from '../../../utils/utils';
 
 export class CardPreview extends CardBase {
   protected descriptionElement: HTMLElement;
-  protected actionButton: HTMLButtonElement;
 
+  private actionButtonElement: HTMLButtonElement;
   private actionHandler: (() => void) | null = null;
 
   constructor(container: HTMLElement) {
@@ -15,12 +15,14 @@ export class CardPreview extends CardBase {
       this.container
     );
 
-    this.actionButton = ensureElement<HTMLButtonElement>(
+    this.actionButtonElement = ensureElement<HTMLButtonElement>(
       '.card__button',
       this.container
     );
 
-    this.actionButton.addEventListener('click', () => {
+    this.actionButton = this.actionButtonElement;
+
+    this.actionButtonElement.addEventListener('click', () => {
       this.actionHandler?.();
     });
   }
@@ -30,11 +32,11 @@ export class CardPreview extends CardBase {
   }
 
   set buttonText(value: string) {
-    this.actionButton.textContent = value;
+    this.actionButtonElement.textContent = value;
   }
 
   set buttonDisabled(value: boolean) {
-    this.actionButton.disabled = value;
+    this.actionButtonElement.disabled = value;
   }
 
   setActionHandler(handler: () => void) {

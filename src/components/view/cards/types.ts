@@ -4,7 +4,8 @@ export interface ICardBase {
   category?: string;
   imageSrc?: string;
   imageAlt?: string;
-  isActionDisabled?: boolean;
+  actionEnabled?: boolean;
+  actionText?: string;
 }
 
 export interface ICatalogCardActions {
