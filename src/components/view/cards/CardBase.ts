@@ -5,9 +5,10 @@ import { categoryMap } from '../../../utils/constants';
 
 export abstract class CardBase extends Component<ICardBase> {
   protected titleElement: HTMLElement;
-  protected priceElement: HTMLElement;
+  protected priceTextElement: HTMLElement;
   protected categoryElement?: HTMLElement;
   protected imageElement?: HTMLImageElement;
+  protected actionButton?: HTMLButtonElement;
 
   protected constructor(container: HTMLElement) {
     super(container);
@@ -17,7 +18,7 @@ export abstract class CardBase extends Component<ICardBase> {
       this.container
     );
 
-    this.priceElement = ensureElement<HTMLElement>(
+    this.priceTextElement = ensureElement<HTMLElement>(
       '.card__price',
       this.container
     );
@@ -27,15 +28,17 @@ export abstract class CardBase extends Component<ICardBase> {
 
     this.imageElement =
       this.container.querySelector('.card__image') ?? undefined;
+
+    this.actionButton =
+      this.container.querySelector('.card__button') ?? undefined;
   }
 
   set title(value: string) {
     this.titleElement.textContent = value;
   }
 
-  set price(value: number | null) {
-    this.priceElement.textContent =
-      value === null ? 'Бесценно' : `${value} синапсов`;
+  set priceText(value: string | undefined) {
+    this.priceTextElement.textContent = value ?? '';
   }
 
   set category(value: string | undefined) {
@@ -43,7 +46,7 @@ export abstract class CardBase extends Component<ICardBase> {
 
     this.categoryElement.className = 'card__category';
 
-    if (value) {
+    if (value && value in categoryMap) {
       this.categoryElement.textContent = value;
       this.categoryElement.classList.add(
         categoryMap[value as keyof typeof categoryMap]
@@ -69,5 +72,15 @@ export abstract class CardBase extends Component<ICardBase> {
     if (!this.imageElement) return;
 
     this.imageElement.alt = value ?? '';
+  }
+
+  set actionEnabled(value: boolean) {
+    if (!this.actionButton) return;
+    this.actionButton.disabled = !value;
+  }
+
+  set actionText(value: string) {
+    if (!this.actionButton) return;
+    this.actionButton.textContent = value;
   }
 }

@@ -1,6 +1,8 @@
 export interface ICardBase {
   title: string;
-  price: string;
+  priceText?: string;
   category?: string;
-  image?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  isActionDisabled?: boolean;
 }
