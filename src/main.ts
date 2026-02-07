@@ -2,6 +2,8 @@ import { CardBasket } from './components/view/cards/CardBasket';
 import { CardCatalog } from './components/view/cards/CardCatalog';
 import { CardPreview } from './components/view/cards/CardPreview';
 import { Gallery } from './components/view/gallery/Gallery';
+import { Header } from './components/view/header/Header';
+import { EventEmitter } from './components/base/Events';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
 import { cloneTemplate } from './utils/utils';
@@ -174,3 +176,11 @@ import { cloneTemplate } from './utils/utils';
 // card3.imageAlt = 'Изображение товара';
 
 // gallery.catalog = [card1.render(), card2.render(), card3.render()];
+// const headerElement = ensureElement<HTMLElement>('.header');
+// const events = new EventEmitter();
+// const header = new Header(headerElement, events);
+// header.counter = 3;
+
+// events.on('basket:open', () => {
+//   console.log('Basket open event received');
+// });
