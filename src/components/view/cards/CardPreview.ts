@@ -31,14 +31,6 @@ export class CardPreview extends CardBase {
     this.descriptionElement.textContent = value;
   }
 
-  set buttonText(value: string) {
-    this.actionButtonElement.textContent = value;
-  }
-
-  set buttonDisabled(value: boolean) {
-    this.actionButtonElement.disabled = value;
-  }
-
   setActionHandler(handler: () => void) {
     this.actionHandler = handler;
   }
