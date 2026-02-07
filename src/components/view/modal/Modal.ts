@@ -26,6 +26,16 @@ export class Modal extends Component<IModal> {
         actions.onClose();
       }
     });
+
+    this.contentElement.addEventListener('click', (evt) => {
+      evt.stopPropagation();
+    });
+
+    document.addEventListener('keydown', (evt) => {
+      if (evt.key === 'Escape') {
+        actions.onClose();
+      }
+    });
   }
 
   set content(value: HTMLElement | null) {
