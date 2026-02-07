@@ -1,110 +1,135 @@
+import { CardBasket } from './components/view/cards/CardBasket';
+import { CardCatalog } from './components/view/cards/CardCatalog';
+import { CardPreview } from './components/view/cards/CardPreview';
 import './scss/styles.scss';
+import { ensureElement } from './utils/utils';
+import { cloneTemplate } from './utils/utils';
 
-import { ProductsModel } from './components/models/ProductsModel';
-import { BasketModel } from './components/models/BasketModel';
-import { BuyerModel } from './components/models/BuyerModel';
+// import { ProductsModel } from './components/models/ProductsModel';
+// import { BasketModel } from './components/models/BasketModel';
+// import { BuyerModel } from './components/models/BuyerModel';
 
-import { apiProducts } from './utils/data';
+// import { apiProducts } from './utils/data';
 
-import { API_URL } from './utils/constants';
-import { Api } from './components/base/Api';
-import { WebLarekApi } from './api/WebLarekApi';
+// import { API_URL } from './utils/constants';
+// import { Api } from './components/base/Api';
+// import { WebLarekApi } from './api/WebLarekApi';
 
 /* =============================== PRODUCTS MODEL =============================== */
 
-console.log('=== ProductsModel ===');
+// console.log('=== ProductsModel ===');
 
-const productsModel = new ProductsModel();
+// const productsModel = new ProductsModel();
 
-productsModel.setItems(apiProducts.items);
-console.log('Каталог товаров загружен:', productsModel.getItems());
+// productsModel.setItems(apiProducts.items);
+// console.log('Каталог товаров загружен:', productsModel.getItems());
 
-productsModel.getItems().forEach(({ id, title, price }) => {
-  console.log(`Товар: id = ${id}, title = ${title}, price = ${price}`);
-});
+// productsModel.getItems().forEach(({ id, title, price }) => {
+//   console.log(`Товар: id = ${id}, title = ${title}, price = ${price}`);
+// });
 
-const selectedProduct = productsModel.getItemById(
-  'c101ab44-ed99-4a54-990d-47aa2bb4e7d9'
-);
+// const selectedProduct = productsModel.getItemById(
+//   'c101ab44-ed99-4a54-990d-47aa2bb4e7d9'
+// );
 
-productsModel.setSelectedItem(selectedProduct ?? null);
-console.log('Выбранный товар:', productsModel.getSelectedItem());
+// productsModel.setSelectedItem(selectedProduct ?? null);
+// console.log('Выбранный товар:', productsModel.getSelectedItem());
 
 /* =============================== BASKET MODEL =============================== */
 
-console.log('=== BasketModel ===');
+// console.log('=== BasketModel ===');
 
-const basketModel = new BasketModel();
+// const basketModel = new BasketModel();
 
-const productIds = [
-  'c101ab44-ed99-4a54-990d-47aa2bb4e7d9',
-  '854cef69-976d-4c2a-a18c-2aa45046c390',
-  '412bcf81-7e75-4e70-bdb9-d3c73c9803b7',
-];
+// const productIds = [
+//   'c101ab44-ed99-4a54-990d-47aa2bb4e7d9',
+//   '854cef69-976d-4c2a-a18c-2aa45046c390',
+//   '412bcf81-7e75-4e70-bdb9-d3c73c9803b7',
+// ];
 
-productIds.forEach((id) => {
-  const product = productsModel.getItemById(id);
-  if (product) {
-    basketModel.addItem(product);
-  }
-});
+// productIds.forEach((id) => {
+//   const product = productsModel.getItemById(id);
+//   if (product) {
+//     basketModel.addItem(product);
+//   }
+// });
 
-console.log('Товары в корзине:', basketModel.getItems());
-console.log('Количество товаров в корзине:', basketModel.getItemsCount());
-console.log('Общая стоимость:', basketModel.getTotalPrice());
+// console.log('Товары в корзине:', basketModel.getItems());
+// console.log('Количество товаров в корзине:', basketModel.getItemsCount());
+// console.log('Общая стоимость:', basketModel.getTotalPrice());
 
-basketModel.removeItem('c101ab44-ed99-4a54-990d-47aa2bb4e7d9');
-console.log('Товары в корзине после удаления:', basketModel.getItems());
+// basketModel.removeItem('c101ab44-ed99-4a54-990d-47aa2bb4e7d9');
+// console.log('Товары в корзине после удаления:', basketModel.getItems());
 
-console.log('Количество товаров в корзине:', basketModel.getItemsCount());
+// console.log('Количество товаров в корзине:', basketModel.getItemsCount());
 
-basketModel.clear();
-console.log('Товары в корзине после очистки:', basketModel.getItems());
+// basketModel.clear();
+// console.log('Товары в корзине после очистки:', basketModel.getItems());
 
 /* =============================== BUYER MODEL =============================== */
 
-console.log('=== BuyerModel ===');
+// console.log('=== BuyerModel ===');
 
-const buyerModel = new BuyerModel();
+// const buyerModel = new BuyerModel();
 
-buyerModel.setData({
-  email: 'test@example.com',
-  phone: '+49123456789',
-  address: 'Berlin, Alexanderplatz',
-  payment: 'card',
-});
+// buyerModel.setData({
+//   email: 'test@example.com',
+//   phone: '+49123456789',
+//   address: 'Berlin, Alexanderplatz',
+//   payment: 'card',
+// });
 
-console.log('Данные покупателя:', buyerModel.getData());
-console.log('Ошибки валидации:', buyerModel.validate());
+// console.log('Данные покупателя:', buyerModel.getData());
+// console.log('Ошибки валидации:', buyerModel.validate());
 
-buyerModel.setData({
-  email: '',
-  phone: '+49123456789',
-  address: 'Berlin, Alexanderplatz',
-  payment: 'card',
-});
+// buyerModel.setData({
+//   email: '',
+//   phone: '+49123456789',
+//   address: 'Berlin, Alexanderplatz',
+//   payment: 'card',
+// });
 
-console.log('Ошибки валидации:', buyerModel.validate());
+// console.log('Ошибки валидации:', buyerModel.validate());
 
-buyerModel.clear();
-console.log('Данные после очистки:', buyerModel.getData());
+// buyerModel.clear();
+// console.log('Данные после очистки:', buyerModel.getData());
 
 /* =============================== INTEGRATION TEST WITH API =============================== */
 
-async function run() {
-  console.log('=== API → ProductsModel ===');
+// async function run() {
+//   console.log('=== API → ProductsModel ===');
 
-  const api = new Api(API_URL);
-  const webLarekApi = new WebLarekApi(api);
-  const productsModel = new ProductsModel();
+//   const api = new Api(API_URL);
+//   const webLarekApi = new WebLarekApi(api);
+//   const productsModel = new ProductsModel();
 
-  const products = await webLarekApi.getProducts();
-  productsModel.setItems(products);
+//   const products = await webLarekApi.getProducts();
+//   productsModel.setItems(products);
 
-  console.log('Каталог товаров загружен с сервера:', productsModel.getItems());
-  console.log('Количество товаров:', productsModel.getItems().length);
-}
+//   console.log('Каталог товаров загружен с сервера:', productsModel.getItems());
+//   console.log('Количество товаров:', productsModel.getItems().length);
+// }
 
-run().catch((error) => {
-  console.error('Ошибка при загрузке каталога:', error);
-});
+// run().catch((error) => {
+//   console.error('Ошибка при загрузке каталога:', error);
+// });
+
+// // 1. Получили DOM-контейнер
+// const gallery = ensureElement<HTMLElement>('.gallery');
+// const template = ensureElement<HTMLTemplateElement>('#card-basket');
+// const cardElement = cloneTemplate<HTMLElement>(template);
+
+// // 2. Создали экземпляр карточки
+// const card = new CardBasket(cardElement, {
+//   onRemove: () => {
+//     console.log('Basket item removed');
+//   },
+// });
+
+// // 4. Заполнили данными через сеттеры
+// card.title = 'Фреймворк куки судьбы';
+// card.priceText = '2500 синанков';
+// card.index = 1;
+
+// // 5. Отрендерили
+// gallery.replaceChildren(card.render());
