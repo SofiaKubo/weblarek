@@ -7,6 +7,7 @@ import { EventEmitter } from './components/base/Events';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
 import { cloneTemplate } from './utils/utils';
+import { Modal } from './components/view/modal/Modal';
 
 // import { ProductsModel } from './components/models/ProductsModel';
 // import { BasketModel } from './components/models/BasketModel';
@@ -117,70 +118,103 @@ import { cloneTemplate } from './utils/utils';
 //   console.error('Ошибка при загрузке каталога:', error);
 // });
 
-// // 1. Получили DOM-контейнер
-// const gallery = ensureElement<HTMLElement>('.gallery');
-// const template = ensureElement<HTMLTemplateElement>('#card-basket');
-// const cardElement = cloneTemplate<HTMLElement>(template);
+// =====================
+// Gallery
+// =====================
+const galleryElement = ensureElement<HTMLElement>('.gallery');
+const gallery = new Gallery(galleryElement);
 
-// // 2. Создали экземпляр карточки
-// const card = new CardBasket(cardElement, {
-//   onRemove: () => {
-//     console.log('Basket item removed');
-//   },
-// });
+// =====================
+// Templates
+// =====================
+const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 
-// // 4. Заполнили данными через сеттеры
-// card.title = 'Фреймворк куки судьбы';
-// card.priceText = '2500 синанков';
-// card.index = 1;
+// =====================
+// Modal
+// =====================
+const modalElement = ensureElement<HTMLElement>('#modal-container');
+const modal = new Modal(modalElement, {
+  onClose: () => console.log('Modal closed'),
+});
 
-// // 5. Отрендерили
-// gallery.replaceChildren(card.render());
-// const galleryElement = ensureElement<HTMLElement>('.gallery');
-// const gallery = new Gallery(galleryElement);
+// =====================
+// Helper: open preview
+// =====================
+function openPreview(data: {
+  title: string;
+  price: string;
+  category: string;
+  imageSrc: string;
+  imageAlt: string;
+}) {
+  const previewElement = cloneTemplate<HTMLElement>(previewTemplate);
 
-// const cardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+  const preview = new CardPreview(previewElement);
 
-// const card1Element = cloneTemplate<HTMLElement>(cardTemplate);
-// const card2Element = cloneTemplate<HTMLElement>(cardTemplate);
-// const card3Element = cloneTemplate<HTMLElement>(cardTemplate);
+  preview.title = data.title;
+  preview.priceText = data.price;
+  preview.category = data.category;
+  preview.imageSrc = data.imageSrc;
+  preview.imageAlt = data.imageAlt;
+  preview.description =
+    'Если планируете решать задачи в тренажёре, берите два.';
 
-// const card1 = new CardCatalog(card1Element, {
-//   onSelect: () => console.log('Card 1 selected'),
-// });
+  preview.setActionHandler(() => {
+    console.log('Add to basket clicked');
+  });
 
-// const card2 = new CardCatalog(card2Element, {
-//   onSelect: () => console.log('Card 2 selected'),
-// });
+  modal.content = preview.render();
+  modal.open();
+}
 
-// const card3 = new CardCatalog(card3Element, {
-//   onSelect: () => console.log('Card 3 selected'),
-// });
+// =====================
+// Cards (Catalog)
+// =====================
+const cardsData = [
+  {
+    title: '+1 час в сутках',
+    price: '750',
+    category: 'софт-скил',
+    imageSrc: '/5 Dots.svg',
+    imageAlt: 'Изображение товара',
+  },
+  {
+    title: 'Фреймворк куки судьбы',
+    price: '2500',
+    category: 'хард-скилл',
+    imageSrc: '/Subtract.svg',
+    imageAlt: 'Изображение товара',
+  },
+  {
+    title: 'БЭМ-пилюлька',
+    price: '150000',
+    category: 'другое',
+    imageSrc: '/Subtract.svg',
+    imageAlt: 'Изображение товара',
+  },
+];
 
-// card1.title = '+1 час в сутках';
-// card1.priceText = '750';
-// card1.category = 'софт-скил';
-// card1.imageSrc = '/5 Dots.svg';
-// card1.imageAlt = 'Изображение товара';
+const catalogCards = cardsData.map((data, index) => {
+  const cardElement = cloneTemplate<HTMLElement>(catalogTemplate);
 
-// card2.title = 'Фреймворк куки судьбы';
-// card2.priceText = '2500';
-// card2.category = 'хард-скил';
-// card2.imageSrc = '/Subtract.svg';
-// card2.imageAlt = 'Изображение товара';
+  const card = new CardCatalog(cardElement, {
+    onSelect: () => {
+      console.log(`Card ${index + 1} selected`);
+      openPreview(data);
+    },
+  });
 
-// card3.title = 'БЭМ-пилюлька';
-// card3.priceText = '150000';
-// card3.category = 'другое';
-// card3.imageSrc = '/Subtract.svg';
-// card3.imageAlt = 'Изображение товара';
+  card.title = data.title;
+  card.priceText = data.price;
+  card.category = data.category;
+  card.imageSrc = data.imageSrc;
+  card.imageAlt = data.imageAlt;
 
-// gallery.catalog = [card1.render(), card2.render(), card3.render()];
-// const headerElement = ensureElement<HTMLElement>('.header');
-// const events = new EventEmitter();
-// const header = new Header(headerElement, events);
-// header.counter = 3;
+  return card.render();
+});
 
-// events.on('basket:open', () => {
-//   console.log('Basket open event received');
-// });
+// =====================
+// Render gallery
+// =====================
+gallery.catalog = catalogCards;
