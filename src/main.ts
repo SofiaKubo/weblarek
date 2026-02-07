@@ -1,6 +1,7 @@
 import { CardBasket } from './components/view/cards/CardBasket';
 import { CardCatalog } from './components/view/cards/CardCatalog';
 import { CardPreview } from './components/view/cards/CardPreview';
+import { Gallery } from './components/view/gallery/Gallery';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
 import { cloneTemplate } from './utils/utils';
@@ -133,3 +134,43 @@ import { cloneTemplate } from './utils/utils';
 
 // // 5. Отрендерили
 // gallery.replaceChildren(card.render());
+// const galleryElement = ensureElement<HTMLElement>('.gallery');
+// const gallery = new Gallery(galleryElement);
+
+// const cardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+
+// const card1Element = cloneTemplate<HTMLElement>(cardTemplate);
+// const card2Element = cloneTemplate<HTMLElement>(cardTemplate);
+// const card3Element = cloneTemplate<HTMLElement>(cardTemplate);
+
+// const card1 = new CardCatalog(card1Element, {
+//   onSelect: () => console.log('Card 1 selected'),
+// });
+
+// const card2 = new CardCatalog(card2Element, {
+//   onSelect: () => console.log('Card 2 selected'),
+// });
+
+// const card3 = new CardCatalog(card3Element, {
+//   onSelect: () => console.log('Card 3 selected'),
+// });
+
+// card1.title = '+1 час в сутках';
+// card1.priceText = '750';
+// card1.category = 'софт-скил';
+// card1.imageSrc = '/5 Dots.svg';
+// card1.imageAlt = 'Изображение товара';
+
+// card2.title = 'Фреймворк куки судьбы';
+// card2.priceText = '2500';
+// card2.category = 'хард-скил';
+// card2.imageSrc = '/Subtract.svg';
+// card2.imageAlt = 'Изображение товара';
+
+// card3.title = 'БЭМ-пилюлька';
+// card3.priceText = '150000';
+// card3.category = 'другое';
+// card3.imageSrc = '/Subtract.svg';
+// card3.imageAlt = 'Изображение товара';
+
+// gallery.catalog = [card1.render(), card2.render(), card3.render()];
