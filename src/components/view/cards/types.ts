@@ -11,3 +11,7 @@ export interface ICardBase {
 export interface ICatalogCardActions {
   onSelect: () => void;
 }
+
+export interface IBasketCardActions {
+  onRemove: () => void;
+}
