@@ -1,7 +1,6 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IHeaderActions } from './types';
-import { IHeader } from './types';
+import { IHeader, IHeaderActions } from './types';
 
 export class Header extends Component<IHeader> {
   protected counterElement: HTMLElement;
