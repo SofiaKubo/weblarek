@@ -3,7 +3,7 @@ import { ensureElement } from '../../../utils/utils';
 import { IEvents } from '../../base/Events';
 import { IHeader } from './types';
 
-export class Gallery extends Component<IHeader> {
+export class Header extends Component<IHeader> {
   protected counterElement: HTMLElement;
   protected basketButton: HTMLButtonElement;
   protected events: IEvents;
