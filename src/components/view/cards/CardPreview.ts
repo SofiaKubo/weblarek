@@ -4,7 +4,6 @@ import { ensureElement } from '../../../utils/utils';
 export class CardPreview extends CardBase {
   protected descriptionElement: HTMLElement;
 
-  private actionButtonElement: HTMLButtonElement;
   private actionHandler: (() => void) | null = null;
 
   constructor(container: HTMLElement) {
@@ -15,28 +14,18 @@ export class CardPreview extends CardBase {
       this.container
     );
 
-    this.actionButtonElement = ensureElement<HTMLButtonElement>(
+    this.actionButton = ensureElement<HTMLButtonElement>(
       '.card__button',
       this.container
     );
 
-    this.actionButton = this.actionButtonElement;
-
-    this.actionButtonElement.addEventListener('click', () => {
+    this.actionButton.addEventListener('click', () => {
       this.actionHandler?.();
     });
   }
 
   set description(value: string) {
     this.descriptionElement.textContent = value;
-  }
-
-  set buttonText(value: string) {
-    this.actionButtonElement.textContent = value;
-  }
-
-  set buttonDisabled(value: boolean) {
-    this.actionButtonElement.disabled = value;
   }
 
   setActionHandler(handler: () => void) {
