@@ -74,9 +74,9 @@ export abstract class CardBase extends Component<ICardBase> {
     this.imageElement.alt = value ?? '';
   }
 
-  set actionEnabled(value: boolean) {
+  set actionDisabled(value: boolean) {
     if (!this.actionButton) return;
-    this.actionButton.disabled = !value;
+    this.actionButton.disabled = value;
   }
 
   set actionText(value: string) {
