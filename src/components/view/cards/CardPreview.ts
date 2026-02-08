@@ -1,12 +1,14 @@
-import { CardBase } from './CardBase';
 import { ensureElement } from '../../../utils/utils';
+import { CardBase } from './CardBase';
+import type { IPreviewCardActions } from './types';
 
 export class CardPreview extends CardBase {
   protected descriptionElement: HTMLElement;
 
-  private actionHandler: (() => void) | null = null;
-
-  constructor(container: HTMLElement) {
+  constructor(
+    container: HTMLElement,
+    private readonly actions: IPreviewCardActions
+  ) {
     super(container);
 
     this.descriptionElement = ensureElement<HTMLElement>(
@@ -14,21 +16,16 @@ export class CardPreview extends CardBase {
       this.container
     );
 
-    this.actionButton = ensureElement<HTMLButtonElement>(
-      '.card__button',
-      this.container
-    );
+    if (!this.actionButton) {
+      throw new Error('Action button is required for CardPreview');
+    }
 
     this.actionButton.addEventListener('click', () => {
-      this.actionHandler?.();
+      this.actions.onAction();
     });
   }
 
   set description(value: string) {
     this.descriptionElement.textContent = value;
-  }
-
-  setActionHandler(handler: () => void) {
-    this.actionHandler = handler;
   }
 }

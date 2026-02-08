@@ -150,7 +150,11 @@ function openPreview(data: {
 }) {
   const previewElement = cloneTemplate<HTMLElement>(previewTemplate);
 
-  const preview = new CardPreview(previewElement);
+  const preview = new CardPreview(previewElement, {
+    onAction: () => {
+      console.log('Add to basket clicked');
+    },
+  });
 
   preview.title = data.title;
   preview.priceText = data.price;
@@ -159,10 +163,6 @@ function openPreview(data: {
   preview.imageAlt = data.imageAlt;
   preview.description =
     'Если планируете решать задачи в тренажёре, берите два.';
-
-  preview.setActionHandler(() => {
-    console.log('Add to basket clicked');
-  });
 
   modal.content = preview.render();
   modal.open();
