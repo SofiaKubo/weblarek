@@ -8,4 +8,12 @@ export interface IFormActions {
   onChange: (field: string, value: string) => void;
 }
 
-export interface IFormContacts extends IFormBase {}
+export interface IFormContacts extends IFormBase {
+  email: string;
+  phone: string;
+}
+
+export interface IFormOrder extends IFormBase {
+  payment: 'card' | 'cash' | null;
+  address: string;
+}
