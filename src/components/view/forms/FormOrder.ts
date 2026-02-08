@@ -35,8 +35,8 @@ export class FormOrder extends FormBase {
   }
 
   set payment(value: 'card' | 'cash' | null) {
-    this.cardButton.classList.toggle('button_active', value === 'card');
-    this.cashButton.classList.toggle('button_active', value === 'cash');
+    this.cardButton.classList.toggle('button_alt-active', value === 'card');
+    this.cashButton.classList.toggle('button_alt-active', value === 'cash');
   }
 
   set address(value: string) {
