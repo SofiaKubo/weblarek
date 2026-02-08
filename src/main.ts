@@ -168,10 +168,11 @@ function openPreview(data: {
   });
 
   preview.title = data.title;
-  preview.priceText = data.price;
+  preview.priceText = `${data.price} синапсов`;
   preview.category = data.category;
   preview.imageSrc = data.imageSrc;
   preview.imageAlt = data.imageAlt;
+  preview.actionText = 'Купить';
   preview.description =
     'Если планируете решать задачи в тренажёре, берите два.';
 
@@ -236,8 +237,18 @@ function openOrderForm() {
         orderForm.address = address;
       }
 
-      orderForm.valid = Boolean(payment) && address.trim().length > 0;
-      orderForm.errors = [];
+      const errors: string[] = [];
+
+      if (!payment) {
+        errors.push('Выберите способ оплаты.');
+      }
+
+      if (address.trim().length < 5) {
+        errors.push('Введите адрес доставки (минимум 5 символов).');
+      }
+
+      orderForm.valid = errors.length === 0;
+      orderForm.errors = errors;
     },
     onSubmit: () => {
       console.log('Order submit', { payment, address });
@@ -274,8 +285,20 @@ function openContactsForm() {
         contactsForm.phone = phone;
       }
 
-      contactsForm.valid = email.trim().length > 0 && phone.trim().length > 0;
-      contactsForm.errors = [];
+      const errors: string[] = [];
+      const emailValue = email.trim();
+      const phoneValue = phone.trim();
+
+      if (!emailValue.includes('@')) {
+        errors.push('Введите корректный email.');
+      }
+
+      if (phoneValue.replace(/\D/g, '').length < 10) {
+        errors.push('Введите корректный номер телефона.');
+      }
+
+      contactsForm.valid = errors.length === 0;
+      contactsForm.errors = errors;
     },
     onSubmit: () => {
       console.log('Contacts submit', { email, phone });
@@ -300,21 +323,24 @@ const cardsData = [
     title: '+1 час в сутках',
     price: '750',
     category: 'софт-скил',
-    imageSrc: '/5 Dots.svg',
+    imageSrc:
+      'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80',
     imageAlt: 'Изображение товара',
   },
   {
     title: 'Фреймворк куки судьбы',
     price: '2500',
-    category: 'хард-скилл',
-    imageSrc: '/Subtract.svg',
+    category: 'хард-скил',
+    imageSrc:
+      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=640&q=80',
     imageAlt: 'Изображение товара',
   },
   {
     title: 'БЭМ-пилюлька',
     price: '150000',
     category: 'другое',
-    imageSrc: '/Subtract.svg',
+    imageSrc:
+      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80',
     imageAlt: 'Изображение товара',
   },
 ];
