@@ -1,6 +1,7 @@
 import { CardBasket } from './components/view/cards/CardBasket';
 import { CardCatalog } from './components/view/cards/CardCatalog';
 import { CardPreview } from './components/view/cards/CardPreview';
+import { Basket } from './components/view/basket/Basket';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Header } from './components/view/header/Header';
 import { EventEmitter } from './components/base/Events';
@@ -129,6 +130,8 @@ const gallery = new Gallery(galleryElement);
 // =====================
 const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 
 // =====================
 // Modal
@@ -169,6 +172,42 @@ function openPreview(data: {
     'Если планируете решать задачи в тренажёре, берите два.';
 
   modal.content = preview.render();
+  modal.open();
+}
+
+// =====================
+// Helper: open basket
+// =====================
+function openBasket(items: typeof cardsData) {
+  const basketElement = cloneTemplate<HTMLElement>(basketTemplate);
+  const basket = new Basket(basketElement, {
+    onSubmit: () => {
+      console.log('Basket submit');
+    },
+  });
+
+  const basketCards = items.map((item, index) => {
+    const cardElement = cloneTemplate<HTMLElement>(basketCardTemplate);
+    const card = new CardBasket(cardElement, {
+      onRemove: () => {
+        console.log(`Remove item ${index + 1}`);
+      },
+    });
+
+    card.index = index + 1;
+    card.title = item.title;
+    card.priceText = item.price;
+
+    return card.render();
+  });
+
+  const total = items.reduce((sum, item) => sum + Number(item.price), 0);
+
+  basket.items = basketCards;
+  basket.total = total;
+  basket.submitDisabled = items.length === 0;
+
+  modal.content = basket.render();
   modal.open();
 }
 
@@ -217,6 +256,18 @@ const catalogCards = cardsData.map((data, index) => {
 
   return card.render();
 });
+
+// =====================
+// Header
+// =====================
+const headerElement = ensureElement<HTMLElement>('.header');
+const header = new Header(headerElement, events);
+
+events.on('basket:open', () => {
+  openBasket(cardsData.slice(0, 2));
+});
+
+header.counter = 2;
 
 // =====================
 // Render gallery
