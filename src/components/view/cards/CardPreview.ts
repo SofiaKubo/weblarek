@@ -3,7 +3,7 @@ import { CardBase } from './CardBase';
 import type { IPreviewCardActions } from './types';
 
 export class CardPreview extends CardBase {
-  protected descriptionElement: HTMLElement;
+  private readonly descriptionElement: HTMLElement;
 
   constructor(
     container: HTMLElement,
