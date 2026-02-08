@@ -4,11 +4,11 @@ import { ICardBase } from './types';
 import { categoryMap } from '../../../utils/constants';
 
 export abstract class CardBase extends Component<ICardBase> {
-  protected titleElement: HTMLElement;
-  protected priceTextElement: HTMLElement;
-  protected categoryElement?: HTMLElement;
-  protected imageElement?: HTMLImageElement;
-  protected actionButton?: HTMLButtonElement;
+  protected readonly titleElement: HTMLElement;
+  protected readonly priceTextElement: HTMLElement;
+  protected readonly categoryElement?: HTMLElement;
+  protected readonly imageElement?: HTMLImageElement;
+  protected readonly actionButton?: HTMLButtonElement;
 
   protected constructor(container: HTMLElement) {
     super(container);
