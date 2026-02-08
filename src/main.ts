@@ -133,9 +133,13 @@ const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 // =====================
 // Modal
 // =====================
+const events = new EventEmitter();
 const modalElement = ensureElement<HTMLElement>('#modal-container');
-const modal = new Modal(modalElement, {
-  onClose: () => console.log('Modal closed'),
+const modal = new Modal(modalElement, events);
+
+events.on('modal:close', () => {
+  modal.close();
+  console.log('Modal closed');
 });
 
 // =====================
