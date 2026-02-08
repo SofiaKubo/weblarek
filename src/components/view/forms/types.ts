@@ -4,6 +4,6 @@ export interface IFormBase {
 }
 
 export interface IFormActions {
-  onSubmit?: () => void;
-  onInput?: (field: string, value: string) => void;
+  onSubmit: () => void;
+  onChange: (field: string, value: string) => void;
 }
