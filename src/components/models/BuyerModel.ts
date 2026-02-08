@@ -7,7 +7,7 @@ export class BuyerModel {
   private phone: string;
   private address: string;
 
-  constructor(private events: IEvents) {
+  constructor(private readonly events: IEvents) {
     this.payment = null;
     this.email = '';
     this.phone = '';

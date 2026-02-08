@@ -5,7 +5,7 @@ export class ProductsModel {
   private items: IProduct[];
   private selectedItem: IProduct | null;
 
-  constructor(private events: IEvents) {
+  constructor(private readonly events: IEvents) {
     this.items = [];
     this.selectedItem = null;
   }
