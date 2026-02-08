@@ -4,11 +4,11 @@ import { ICardBase } from './types';
 import { categoryMap } from '../../../utils/constants';
 
 export abstract class CardBase extends Component<ICardBase> {
-  protected titleElement: HTMLElement;
-  protected priceTextElement: HTMLElement;
-  protected categoryElement?: HTMLElement;
-  protected imageElement?: HTMLImageElement;
-  protected actionButton?: HTMLButtonElement;
+  protected readonly titleElement: HTMLElement;
+  protected readonly priceTextElement: HTMLElement;
+  protected readonly categoryElement?: HTMLElement;
+  protected readonly imageElement?: HTMLImageElement;
+  protected readonly actionButton?: HTMLButtonElement;
 
   protected constructor(container: HTMLElement) {
     super(container);
@@ -44,17 +44,16 @@ export abstract class CardBase extends Component<ICardBase> {
   set category(value: string | undefined) {
     if (!this.categoryElement) return;
 
-    this.categoryElement.className = 'card__category';
+    this.categoryElement.textContent = value ?? '';
 
-    if (value && value in categoryMap) {
-      this.categoryElement.textContent = value;
-      this.categoryElement.classList.add(
-        categoryMap[value as keyof typeof categoryMap]
+    for (const key in categoryMap) {
+      this.categoryElement.classList.toggle(
+        categoryMap[key as keyof typeof categoryMap],
+        key === value
       );
-      this.categoryElement.hidden = false;
-    } else {
-      this.categoryElement.hidden = true;
     }
+
+    this.categoryElement.hidden = !value;
   }
 
   set imageSrc(value: string | undefined) {

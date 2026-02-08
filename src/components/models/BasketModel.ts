@@ -3,7 +3,7 @@ import { IEvents } from '../../components/base/Events';
 export class BasketModel {
   private items: IProduct[];
 
-  constructor(private events: IEvents) {
+  constructor(private readonly events: IEvents) {
     this.items = [];
   }
 

@@ -12,6 +12,10 @@ export interface ICatalogCardActions {
   onSelect: () => void;
 }
 
+export interface IPreviewCardActions {
+  onAction: () => void;
+}
+
 export interface IBasketCardActions {
   onRemove: () => void;
 }
