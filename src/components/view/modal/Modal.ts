@@ -1,17 +1,17 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IModal, IModalActions } from './types';
+import type { IEvents } from '../../base/Events';
 
-export class Modal extends Component<IModal> {
-  protected closeButton: HTMLButtonElement;
-  protected contentElement: HTMLElement;
-
+export class Modal extends Component<null> {
+  private readonly closeButton: HTMLButtonElement;
+  private readonly contentElement: HTMLElement;
   private isOpen = false;
-  private readonly actions: IModalActions;
 
-  constructor(container: HTMLElement, actions: IModalActions) {
+  constructor(
+    container: HTMLElement,
+    private events: IEvents
+  ) {
     super(container);
-    this.actions = actions;
 
     this.closeButton = ensureElement<HTMLButtonElement>(
       '.modal__close',
@@ -23,37 +23,36 @@ export class Modal extends Component<IModal> {
       this.container
     );
 
+    this.bindEvents();
+  }
+
+  private bindEvents(): void {
     this.closeButton.addEventListener('click', () => {
-      this.actions.onClose();
+      this.events.emit('modal:close');
     });
 
     this.container.addEventListener('click', (evt) => {
       if (evt.target === this.container) {
-        this.actions.onClose();
+        this.events.emit('modal:close');
       }
     });
   }
 
-  private handleEscape = (evt: KeyboardEvent) => {
-    if (evt.key === 'Escape' && this.isOpen) {
-      this.actions.onClose();
+  private handleEscape = (evt: KeyboardEvent): void => {
+    if (evt.key === 'Escape') {
+      this.events.emit('modal:close');
     }
   };
-
-  set content(value: HTMLElement | null) {
-    this.contentElement.replaceChildren();
-
-    if (value) {
-      this.contentElement.append(value);
-    }
-  }
 
   open(): void {
     if (this.isOpen) return;
 
     this.isOpen = true;
     this.container.classList.add('modal_active');
+
     document.addEventListener('keydown', this.handleEscape);
+
+    this.events.emit('modal:open');
   }
 
   close(): void {
@@ -62,6 +61,18 @@ export class Modal extends Component<IModal> {
     this.isOpen = false;
     this.container.classList.remove('modal_active');
     this.content = null;
+
     document.removeEventListener('keydown', this.handleEscape);
+  }
+
+  set content(node: HTMLElement | null) {
+    this.contentElement.replaceChildren();
+    if (node) {
+      this.contentElement.append(node);
+    }
+  }
+
+  render(): HTMLElement {
+    return this.container;
   }
 }
