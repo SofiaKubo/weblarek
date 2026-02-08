@@ -2,6 +2,8 @@ import { CardBasket } from './components/view/cards/CardBasket';
 import { CardCatalog } from './components/view/cards/CardCatalog';
 import { CardPreview } from './components/view/cards/CardPreview';
 import { Basket } from './components/view/basket/Basket';
+import { FormOrder } from './components/view/forms/FormOrder';
+import { FormContacts } from './components/view/forms/FormContacts';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Header } from './components/view/header/Header';
 import { EventEmitter } from './components/base/Events';
@@ -132,6 +134,8 @@ const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
 const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
+const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
 // =====================
 // Modal
@@ -183,6 +187,7 @@ function openBasket(items: typeof cardsData) {
   const basket = new Basket(basketElement, {
     onSubmit: () => {
       console.log('Basket submit');
+      openOrderForm();
     },
   });
 
@@ -208,6 +213,82 @@ function openBasket(items: typeof cardsData) {
   basket.submitDisabled = items.length === 0;
 
   modal.content = basket.render();
+  modal.open();
+}
+
+// =====================
+// Helper: open order form
+// =====================
+function openOrderForm() {
+  const orderElement = cloneTemplate<HTMLFormElement>(orderTemplate);
+  let payment: 'card' | 'cash' | null = null;
+  let address = '';
+
+  const orderForm = new FormOrder(orderElement, {
+    onChange: (field, value) => {
+      if (field === 'payment' && (value === 'card' || value === 'cash')) {
+        payment = value;
+        orderForm.payment = payment;
+      }
+
+      if (field === 'address') {
+        address = value;
+        orderForm.address = address;
+      }
+
+      orderForm.valid = Boolean(payment) && address.trim().length > 0;
+      orderForm.errors = [];
+    },
+    onSubmit: () => {
+      console.log('Order submit', { payment, address });
+      openContactsForm();
+    },
+  });
+
+  orderForm.payment = payment;
+  orderForm.address = address;
+  orderForm.valid = false;
+  orderForm.errors = [];
+
+  modal.content = orderForm.render();
+  modal.open();
+}
+
+// =====================
+// Helper: open contacts form
+// =====================
+function openContactsForm() {
+  const contactsElement = cloneTemplate<HTMLFormElement>(contactsTemplate);
+  let email = '';
+  let phone = '';
+
+  const contactsForm = new FormContacts(contactsElement, {
+    onChange: (field, value) => {
+      if (field === 'email') {
+        email = value;
+        contactsForm.email = email;
+      }
+
+      if (field === 'phone') {
+        phone = value;
+        contactsForm.phone = phone;
+      }
+
+      contactsForm.valid = email.trim().length > 0 && phone.trim().length > 0;
+      contactsForm.errors = [];
+    },
+    onSubmit: () => {
+      console.log('Contacts submit', { email, phone });
+      modal.close();
+    },
+  });
+
+  contactsForm.email = email;
+  contactsForm.phone = phone;
+  contactsForm.valid = false;
+  contactsForm.errors = [];
+
+  modal.content = contactsForm.render();
   modal.open();
 }
 
