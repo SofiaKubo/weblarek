@@ -3,8 +3,8 @@ import { ensureElement } from '../../../utils/utils';
 import { IBasketCardActions } from './types';
 
 export class CardBasket extends CardBase {
-  protected indexElement: HTMLElement;
-  protected removeButton: HTMLButtonElement;
+  private readonly indexElement: HTMLElement;
+  private readonly removeButton: HTMLButtonElement;
 
   constructor(container: HTMLElement, actions: IBasketCardActions) {
     super(container);
