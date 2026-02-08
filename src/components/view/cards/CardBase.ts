@@ -44,17 +44,16 @@ export abstract class CardBase extends Component<ICardBase> {
   set category(value: string | undefined) {
     if (!this.categoryElement) return;
 
-    this.categoryElement.className = 'card__category';
+    this.categoryElement.textContent = value ?? '';
 
-    if (value && value in categoryMap) {
-      this.categoryElement.textContent = value;
-      this.categoryElement.classList.add(
-        categoryMap[value as keyof typeof categoryMap]
+    for (const key in categoryMap) {
+      this.categoryElement.classList.toggle(
+        categoryMap[key as keyof typeof categoryMap],
+        key === value
       );
-      this.categoryElement.hidden = false;
-    } else {
-      this.categoryElement.hidden = true;
     }
+
+    this.categoryElement.hidden = !value;
   }
 
   set imageSrc(value: string | undefined) {
