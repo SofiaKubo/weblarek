@@ -1,7 +1,6 @@
-export interface IModal {
-  content: HTMLElement | null;
-}
+export interface ModalProps {}
 
-export interface IModalActions {
-  onClose(): void;
-}
+export type ModalEvents = {
+  'modal:open': void;
+  'modal:close': void;
+};
