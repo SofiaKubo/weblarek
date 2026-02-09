@@ -69,8 +69,4 @@ export class Modal extends Component<null> {
       this.contentElement.append(node);
     }
   }
-
-  render(): HTMLElement {
-    return this.container;
-  }
 }
