@@ -31,7 +31,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
   protected bindEvents(): void {
     this.formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      this.actions.onSubmit();
+      this.actions.onSubmitRequest();
     });
 
     this.formElement.addEventListener('input', (evt) => {
@@ -40,7 +40,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
       if (!(target instanceof HTMLInputElement)) return;
       if (!target.name) return;
 
-      this.actions.onChange(target.name, target.value);
+      this.actions.onFieldChange(target.name, target.value);
     });
   }
 
