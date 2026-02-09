@@ -186,7 +186,7 @@ function openPreview(data: {
 function openBasket(items: typeof cardsData) {
   const basketElement = cloneTemplate<HTMLElement>(basketTemplate);
   const basket = new Basket(basketElement, {
-    onSubmit: () => {
+    onSubmitRequest: () => {
       console.log('Basket submit');
       openOrderForm();
     },

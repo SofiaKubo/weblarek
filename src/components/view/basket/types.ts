@@ -5,5 +5,5 @@ export interface IBasketData {
 }
 
 export interface IBasketActions {
-  onSubmit: () => void;
+  onSubmitRequest: () => void;
 }

@@ -25,7 +25,7 @@ export class Basket extends Component<IBasketData> {
       this.container
     );
 
-    this.submitButton.addEventListener('click', actions.onSubmit);
+    this.submitButton.addEventListener('click', actions.onSubmitRequest);
   }
 
   set items(cards: HTMLElement[]) {
