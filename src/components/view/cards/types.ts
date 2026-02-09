@@ -8,6 +8,14 @@ export interface ICardBaseData {
   actionText?: string;
 }
 
+export interface IPreviewCardData extends ICardBaseData {
+  description: string;
+}
+
+export interface IBasketCardData extends ICardBaseData {
+  index: number;
+}
+
 export interface ICatalogCardActions {
   onSelectRequest: () => void;
 }
