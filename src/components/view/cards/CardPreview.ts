@@ -5,10 +5,7 @@ import type { IPreviewCardActions } from './types';
 export class CardPreview extends CardBase {
   private readonly descriptionElement: HTMLElement;
 
-  constructor(
-    container: HTMLElement,
-    private readonly actions: IPreviewCardActions
-  ) {
+  constructor(container: HTMLElement, actions: IPreviewCardActions) {
     super(container);
 
     this.descriptionElement = ensureElement<HTMLElement>(
@@ -21,7 +18,7 @@ export class CardPreview extends CardBase {
     }
 
     this.actionButton.addEventListener('click', () => {
-      this.actions.onActionRequest();
+      actions.onActionRequest();
     });
   }
 
