@@ -39,7 +39,7 @@ export class Modal extends Component<null> {
   }
 
   private handleEscape = (evt: KeyboardEvent): void => {
-    if (evt.key === 'Escape') {
+    if (evt.key === 'Escape' && this.isOpen) {
       this.events.emit('modal:close-request');
     }
   };
