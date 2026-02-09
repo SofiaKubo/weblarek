@@ -28,19 +28,19 @@ export class Modal extends Component<null> {
 
   private bindEvents(): void {
     this.closeButton.addEventListener('click', () => {
-      this.events.emit('modal:close');
+      this.events.emit('modal:close-request');
     });
 
     this.container.addEventListener('click', (evt) => {
       if (evt.target === this.container) {
-        this.events.emit('modal:close');
+        this.events.emit('modal:close-request');
       }
     });
   }
 
   private handleEscape = (evt: KeyboardEvent): void => {
     if (evt.key === 'Escape') {
-      this.events.emit('modal:close');
+      this.events.emit('modal:close-request');
     }
   };
 
@@ -51,8 +51,6 @@ export class Modal extends Component<null> {
     this.container.classList.add('modal_active');
 
     document.addEventListener('keydown', this.handleEscape);
-
-    this.events.emit('modal:open');
   }
 
   close(): void {
