@@ -1,3 +1,3 @@
-export interface IGallery {
+export interface IGalleryData {
   catalog: HTMLElement[];
 }

@@ -1,9 +1,9 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { ICardBase } from './types';
+import { ICardBaseData } from './types';
 import { categoryMap } from '../../../utils/constants';
 
-export abstract class CardBase extends Component<ICardBase> {
+export abstract class CardBase extends Component<ICardBaseData> {
   protected readonly titleElement: HTMLElement;
   protected readonly priceTextElement: HTMLElement;
   protected readonly categoryElement?: HTMLElement;

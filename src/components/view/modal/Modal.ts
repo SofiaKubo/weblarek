@@ -1,8 +1,9 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
 import type { IEvents } from '../../base/Events';
+import { IModalData } from './types';
 
-export class Modal extends Component<null> {
+export class Modal extends Component<IModalData> {
   private readonly closeButton: HTMLButtonElement;
   private readonly contentElement: HTMLElement;
   private isOpen = false;

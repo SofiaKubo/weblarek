@@ -144,7 +144,7 @@ const events = new EventEmitter();
 const modalElement = ensureElement<HTMLElement>('#modal-container');
 const modal = new Modal(modalElement, events);
 
-events.on('modal:close', () => {
+events.on('modal:close-request', () => {
   modal.close();
   console.log('Modal closed');
 });

@@ -1,7 +1,7 @@
 import { Component } from '../../base/Component';
-import { IGallery } from './types';
+import { IGalleryData } from './types';
 
-export class Gallery extends Component<IGallery> {
+export class Gallery extends Component<IGalleryData> {
   constructor(container: HTMLElement) {
     super(container);
   }

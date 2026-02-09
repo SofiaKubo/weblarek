@@ -1,4 +1,4 @@
-export interface ICardBase {
+export interface ICardBaseData {
   title: string;
   priceText: string;
   category?: string;

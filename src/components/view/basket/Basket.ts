@@ -1,8 +1,8 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import type { IBasket, IBasketActions } from './types';
+import type { IBasketActions, IBasketData } from './types';
 
-export class Basket extends Component<IBasket> {
+export class Basket extends Component<IBasketData> {
   private readonly listElement: HTMLElement;
   private readonly totalElement: HTMLElement;
   private readonly submitButton: HTMLButtonElement;

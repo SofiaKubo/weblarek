@@ -1,8 +1,8 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import type { IFormBase, IFormActions } from './types';
+import type { IFormBaseData, IFormActions } from './types';
 
-export abstract class FormBase extends Component<IFormBase> {
+export abstract class FormBase extends Component<IFormBaseData> {
   protected readonly formElement: HTMLFormElement;
   protected readonly submitButton: HTMLButtonElement;
   protected readonly errorsElement: HTMLElement;

@@ -1,9 +1,9 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IHeader } from './types';
+import { IHeaderData } from './types';
 import type { IEvents } from '../../base/Events';
 
-export class Header extends Component<IHeader> {
+export class Header extends Component<IHeaderData> {
   private readonly counterElement: HTMLElement;
   private readonly basketButton: HTMLButtonElement;
 

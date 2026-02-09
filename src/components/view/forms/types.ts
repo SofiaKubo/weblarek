@@ -1,4 +1,4 @@
-export interface IFormBase {
+export interface IFormBaseData {
   valid: boolean;
   errors: string[];
 }
@@ -8,12 +8,12 @@ export interface IFormActions {
   onChange: (field: string, value: string) => void;
 }
 
-export interface IFormContacts extends IFormBase {
+export interface IFormContactsData extends IFormBaseData {
   email: string;
   phone: string;
 }
 
-export interface IFormOrder extends IFormBase {
+export interface IFormOrderData extends IFormBaseData {
   payment: 'card' | 'cash' | null;
   address: string;
 }
