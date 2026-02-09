@@ -162,7 +162,7 @@ function openPreview(data: {
   const previewElement = cloneTemplate<HTMLElement>(previewTemplate);
 
   const preview = new CardPreview(previewElement, {
-    onAction: () => {
+    onActionRequest: () => {
       console.log('Add to basket clicked');
     },
   });
@@ -195,7 +195,7 @@ function openBasket(items: typeof cardsData) {
   const basketCards = items.map((item, index) => {
     const cardElement = cloneTemplate<HTMLElement>(basketCardTemplate);
     const card = new CardBasket(cardElement, {
-      onRemove: () => {
+      onRemoveRequest: () => {
         console.log(`Remove item ${index + 1}`);
       },
     });
@@ -226,7 +226,7 @@ function openOrderForm() {
   let address = '';
 
   const orderForm = new FormOrder(orderElement, {
-    onChange: (field, value) => {
+    onFieldChange: (field, value) => {
       if (field === 'payment' && (value === 'card' || value === 'cash')) {
         payment = value;
         orderForm.payment = payment;
@@ -250,7 +250,7 @@ function openOrderForm() {
       orderForm.valid = errors.length === 0;
       orderForm.errors = errors;
     },
-    onSubmit: () => {
+    onSubmitRequest: () => {
       console.log('Order submit', { payment, address });
       openContactsForm();
     },
@@ -274,7 +274,7 @@ function openContactsForm() {
   let phone = '';
 
   const contactsForm = new FormContacts(contactsElement, {
-    onChange: (field, value) => {
+    onFieldChange: (field, value) => {
       if (field === 'email') {
         email = value;
         contactsForm.email = email;
@@ -300,7 +300,7 @@ function openContactsForm() {
       contactsForm.valid = errors.length === 0;
       contactsForm.errors = errors;
     },
-    onSubmit: () => {
+    onSubmitRequest: () => {
       console.log('Contacts submit', { email, phone });
       modal.close();
     },
@@ -349,7 +349,7 @@ const catalogCards = cardsData.map((data, index) => {
   const cardElement = cloneTemplate<HTMLElement>(catalogTemplate);
 
   const card = new CardCatalog(cardElement, {
-    onSelect: () => {
+    onSelectRequest: () => {
       console.log(`Card ${index + 1} selected`);
       openPreview(data);
     },

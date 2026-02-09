@@ -17,7 +17,7 @@ export class CardBasket extends CardBase {
       this.container
     );
 
-    this.removeButton.addEventListener('click', actions.onRemove);
+    this.removeButton.addEventListener('click', actions.onRemoveRequest);
   }
 
   set index(value: number) {

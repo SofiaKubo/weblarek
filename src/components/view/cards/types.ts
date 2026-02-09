@@ -9,13 +9,13 @@ export interface ICardBaseData {
 }
 
 export interface ICatalogCardActions {
-  onSelect: () => void;
+  onSelectRequest: () => void;
 }
 
 export interface IPreviewCardActions {
-  onAction: () => void;
+  onActionRequest: () => void;
 }
 
 export interface IBasketCardActions {
-  onRemove: () => void;
+  onRemoveRequest: () => void;
 }

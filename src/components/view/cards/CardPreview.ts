@@ -21,7 +21,7 @@ export class CardPreview extends CardBase {
     }
 
     this.actionButton.addEventListener('click', () => {
-      this.actions.onAction();
+      this.actions.onActionRequest();
     });
   }
 

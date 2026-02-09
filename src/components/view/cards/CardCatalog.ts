@@ -5,6 +5,6 @@ export class CardCatalog extends CardBase {
   constructor(container: HTMLElement, actions: ICatalogCardActions) {
     super(container);
 
-    this.container.addEventListener('click', actions.onSelect);
+    this.container.addEventListener('click', actions.onSelectRequest);
   }
 }

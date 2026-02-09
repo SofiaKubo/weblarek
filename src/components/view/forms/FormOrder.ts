@@ -26,11 +26,11 @@ export class FormOrder extends FormBase {
     );
 
     this.cardButton.addEventListener('click', () => {
-      actions.onChange('payment', 'card');
+      actions.onFieldChange('payment', 'card');
     });
 
     this.cashButton.addEventListener('click', () => {
-      actions.onChange('payment', 'cash');
+      actions.onFieldChange('payment', 'cash');
     });
   }
 
