@@ -1,8 +1,8 @@
 import { CardBase } from './CardBase';
 import { ensureElement } from '../../../utils/utils';
-import { IBasketCardActions } from './types';
+import { IBasketCardActions, IBasketCardData } from './types';
 
-export class CardBasket extends CardBase {
+export class CardBasket extends CardBase<IBasketCardData> {
   private readonly indexElement: HTMLElement;
   private readonly removeButton: HTMLButtonElement;
 

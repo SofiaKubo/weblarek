@@ -16,6 +16,8 @@ export interface IBasketCardData extends ICardBaseData {
   index: number;
 }
 
+export interface ICatalogCardData extends ICardBaseData {}
+
 export interface ICatalogCardActions {
   onSelectRequest: () => void;
 }

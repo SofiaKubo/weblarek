@@ -1,8 +1,8 @@
 import { ensureElement } from '../../../utils/utils';
 import { CardBase } from './CardBase';
-import type { IPreviewCardActions } from './types';
+import type { IPreviewCardActions, IPreviewCardData } from './types';
 
-export class CardPreview extends CardBase {
+export class CardPreview extends CardBase<IPreviewCardData> {
   private readonly descriptionElement: HTMLElement;
 
   constructor(container: HTMLElement, actions: IPreviewCardActions) {
