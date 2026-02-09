@@ -24,7 +24,7 @@ export class Header extends Component<IHeaderData> {
     );
 
     this.basketButton.addEventListener('click', () => {
-      this.events.emit('basket:open');
+      this.events.emit('basket:open-request');
     });
   }
 
