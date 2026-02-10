@@ -49,7 +49,7 @@ export class Presenter {
 
   init() {
     this.bindEvents();
-    this.loadInitialCatalog();
+    void this.loadInitialCatalog();
   }
 
   private bindEvents() {
