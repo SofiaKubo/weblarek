@@ -71,8 +71,7 @@ export class Presenter {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onSelectRequest: () => {
-          const product = this.productsModel.getItemById(item.id);
-          if (product) this.productsModel.setSelectedItem(product);
+          this.productsModel.setSelectedItem(item);
         },
       });
 
