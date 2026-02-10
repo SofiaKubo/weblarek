@@ -2,6 +2,7 @@ import { EventEmitter } from './components/base/Events';
 import { WebLarekApi } from './api/WebLarekApi';
 import { Api } from './components/base/Api';
 import { API_URL } from './utils/constants';
+import { CDN_URL } from './utils/constants';
 import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Header } from './components/view/header/Header';
@@ -18,6 +19,7 @@ import { BasketModel } from './components/models/BasketModel';
 const events = new EventEmitter();
 const api = new Api(API_URL);
 const webLarekApi = new WebLarekApi(api);
+const imageBaseUrl = CDN_URL;
 
 // 2. Models
 const productsModel = new ProductsModel(events);
@@ -39,6 +41,7 @@ const modalView = new Modal(modalContainer, events);
 const presenter = new Presenter({
   events,
   webLarekApi,
+  imageBaseUrl,
   productsModel,
   basketModel,
   galleryView,
@@ -51,28 +54,6 @@ const presenter = new Presenter({
 
 // 7. Launch
 presenter.init();
-
-/* =============================== PRODUCTS MODEL =============================== */
-
-// console.log('=== ProductsModel ===');
-
-// const productsModel = new ProductsModel();
-
-// productsModel.setItems(apiProducts.items);
-// console.log('Каталог товаров загружен:', productsModel.getItems());
-
-// productsModel.getItems().forEach(({ id, title, price }) => {
-//   console.log(`Товар: id = ${id}, title = ${title}, price = ${price}`);
-// });
-
-// const selectedProduct = productsModel.getItemById(
-//   'c101ab44-ed99-4a54-990d-47aa2bb4e7d9'
-// );
-
-// productsModel.setSelectedItem(selectedProduct ?? null);
-// console.log('Выбранный товар:', productsModel.getSelectedItem());
-
-/* =============================== BASKET MODEL =============================== */
 
 // console.log('=== BasketModel ===');
 

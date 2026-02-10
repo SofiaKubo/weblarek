@@ -8,11 +8,11 @@ import { IProduct } from '../types';
 import { cloneTemplate } from '../utils/utils';
 import { CardPreview } from '../components/view/cards/CardPreview';
 import { BasketModel } from '../components/models/BasketModel';
-import { CDN_URL } from '../utils/constants';
 
 type PresenterDependencies = {
   events: IEvents;
   webLarekApi: WebLarekApi;
+  imageBaseUrl: string;
   productsModel: ProductsModel;
   basketModel: BasketModel;
   galleryView: Gallery;
@@ -26,6 +26,7 @@ type PresenterDependencies = {
 export class Presenter {
   private events: IEvents;
   private webLarekApi: WebLarekApi;
+  private imageBaseUrl: string;
   private productsModel: ProductsModel;
   private basketModel: BasketModel;
   private galleryView: Gallery;
@@ -38,6 +39,7 @@ export class Presenter {
   constructor(deps: PresenterDependencies) {
     this.events = deps.events;
     this.webLarekApi = deps.webLarekApi;
+    this.imageBaseUrl = deps.imageBaseUrl;
     this.productsModel = deps.productsModel;
     this.basketModel = deps.basketModel;
     this.galleryView = deps.galleryView;
@@ -80,7 +82,7 @@ export class Presenter {
         title: item.title,
         priceText: item.price === null ? 'Бесценно' : `${item.price} синапсов`,
         category: item.category,
-        imageSrc: item.image ? `${CDN_URL}/${item.image}` : undefined,
+        imageSrc: item.image ? `${this.imageBaseUrl}/${item.image}` : undefined,
         imageAlt: item.title,
       });
     });
@@ -114,7 +116,9 @@ export class Presenter {
     const content = cardView.render({
       title: product.title,
       description: product.description,
-      imageSrc: product.image ? `${CDN_URL}/${product.image}` : undefined,
+      imageSrc: product.image
+        ? `${this.imageBaseUrl}/${product.image}`
+        : undefined,
       imageAlt: product.title,
       priceText: isPriceless ? 'Бесценно' : `${product.price} синапсов`,
       category: product.category,
