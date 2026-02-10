@@ -55,6 +55,7 @@ export class Presenter {
     this.events.on('ui:product-clicked', this.onProductClicked);
     this.events.on('products:selected-changed', this.onProductSelectedChanged);
     this.events.on('ui:product-action', this.onProductAction);
+    this.events.on('ui:modal-close-request', this.onModalCloseRequest);
   }
 
   private async loadInitialCatalog() {
@@ -141,5 +142,9 @@ export class Presenter {
     } else {
       this.basketModel.addItem(product);
     }
+  };
+
+  private onModalCloseRequest = () => {
+    this.modalView.close();
   };
 }
