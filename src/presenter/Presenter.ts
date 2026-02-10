@@ -70,7 +70,7 @@ export class Presenter {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onSelectRequest: () => {
-          this.events.emit('ui:product-clicked', item);
+          this.events.emit('ui:product-clicked', { productId: item.id });
         },
       });
 
@@ -86,7 +86,10 @@ export class Presenter {
     this.galleryView.render({ catalog: cardElements });
   };
 
-  private onProductClicked = (product: IProduct) => {
+  private onProductClicked = ({ productId }: { productId: string }) => {
+    const product = this.productsModel.getItemById(productId);
+    if (!product) return;
+
     this.productsModel.setSelectedItem(product);
   };
 
