@@ -10,7 +10,7 @@ import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
 import { BasketModel } from './components/models/BasketModel';
 
-function createApp(): Presenter {
+function bootstrapApp(): Presenter {
   // 1. Infrastructure
   const events = new EventEmitter();
   const api = new Api(API_URL);
@@ -49,14 +49,14 @@ function createApp(): Presenter {
   });
 }
 
-function startApp(): void {
+function initApp(): void {
   try {
     // 7. Launch
-    const presenter = createApp();
+    const presenter = bootstrapApp();
     presenter.init();
   } catch (error) {
     console.error('App bootstrap failed', error);
   }
 }
 
-startApp();
+initApp();
