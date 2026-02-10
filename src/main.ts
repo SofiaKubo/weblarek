@@ -1,8 +1,7 @@
 import { EventEmitter } from './components/base/Events';
 import { WebLarekApi } from './api/WebLarekApi';
 import { Api } from './components/base/Api';
-import { API_URL } from './utils/constants';
-import { CDN_URL } from './utils/constants';
+import { API_URL, CDN_URL } from './utils/constants';
 import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Modal } from './components/view/modal/Modal';
