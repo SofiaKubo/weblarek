@@ -8,6 +8,7 @@ import { IProduct } from '../types';
 import { cloneTemplate } from '../utils/utils';
 import { CardPreview } from '../components/view/cards/CardPreview';
 import { BasketModel } from '../components/models/BasketModel';
+import { CDN_URL } from '../utils/constants';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -79,7 +80,7 @@ export class Presenter {
         title: item.title,
         priceText: item.price === null ? 'Бесценно' : `${item.price} синапсов`,
         category: item.category,
-        imageSrc: item.image,
+        imageSrc: item.image ? `${CDN_URL}/${item.image}` : undefined,
         imageAlt: item.title,
       });
     });
@@ -113,7 +114,7 @@ export class Presenter {
     const content = cardView.render({
       title: product.title,
       description: product.description,
-      imageSrc: product.image,
+      imageSrc: product.image ? `${CDN_URL}/${product.image}` : undefined,
       imageAlt: product.title,
       priceText: isPriceless ? 'Бесценно' : `${product.price} синапсов`,
       category: product.category,
@@ -125,7 +126,7 @@ export class Presenter {
           : 'Купить',
     });
 
-    this.modalView.render({ content });
+    this.modalView.content = content;
 
     this.modalView.open();
   };
