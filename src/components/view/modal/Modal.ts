@@ -29,19 +29,19 @@ export class Modal extends Component<IModalData> {
 
   private bindEvents(): void {
     this.closeButton.addEventListener('click', () => {
-      this.events.emit('modal:close-request');
+      this.events.emit('ui:modal-close-request');
     });
 
     this.container.addEventListener('click', (evt) => {
       if (evt.target === this.container) {
-        this.events.emit('modal:close-request');
+        this.events.emit('ui:modal-close-request');
       }
     });
   }
 
   private handleEscape = (evt: KeyboardEvent): void => {
     if (evt.key === 'Escape' && this.isOpen) {
-      this.events.emit('modal:close-request');
+      this.events.emit('ui:modal-close-request');
     }
   };
 
