@@ -1,26 +1,56 @@
-import { CardBasket } from './components/view/cards/CardBasket';
-import { CardCatalog } from './components/view/cards/CardCatalog';
-import { CardPreview } from './components/view/cards/CardPreview';
-import { Basket } from './components/view/basket/Basket';
-import { FormOrder } from './components/view/forms/FormOrder';
-import { FormContacts } from './components/view/forms/FormContacts';
+import { EventEmitter } from './components/base/Events';
+import { WebLarekApi } from './api/WebLarekApi';
+import { Api } from './components/base/Api';
+import { API_URL } from './utils/constants';
+import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Header } from './components/view/header/Header';
-import { EventEmitter } from './components/base/Events';
+import { Modal } from './components/view/modal/Modal';
+import { CardPreview } from './components/view/cards/CardPreview';
+import { CardCatalog } from './components/view/cards/CardCatalog';
+import { Presenter } from './presenter/Presenter';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
 import { cloneTemplate } from './utils/utils';
-import { Modal } from './components/view/modal/Modal';
+import { BasketModel } from './components/models/BasketModel';
 
-// import { ProductsModel } from './components/models/ProductsModel';
-// import { BasketModel } from './components/models/BasketModel';
-// import { BuyerModel } from './components/models/BuyerModel';
+// 1. Infrastructure
+const events = new EventEmitter();
+const api = new Api(API_URL);
+const webLarekApi = new WebLarekApi(api);
 
-// import { apiProducts } from './utils/data';
+// 2. Models
+const productsModel = new ProductsModel(events);
+const basketModel = new BasketModel(events);
 
-// import { API_URL } from './utils/constants';
-// import { Api } from './components/base/Api';
-// import { WebLarekApi } from './api/WebLarekApi';
+// 3. DOM containers (queried once at startup)
+const galleryContainer = ensureElement<HTMLElement>('.gallery');
+const modalContainer = ensureElement<HTMLElement>('#modal-container');
+
+// 4. Templates
+const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+
+// 5. Views (long-lived container components)
+const galleryView = new Gallery(galleryContainer);
+const modalView = new Modal(modalContainer, events);
+
+// 6. Presenter
+const presenter = new Presenter({
+  events,
+  webLarekApi,
+  productsModel,
+  basketModel,
+  galleryView,
+  modalView,
+  templates: {
+    cardCatalog: catalogTemplate,
+    cardPreview: previewTemplate,
+  },
+});
+
+// 7. Launch
+presenter.init();
 
 /* =============================== PRODUCTS MODEL =============================== */
 
@@ -124,259 +154,252 @@ import { Modal } from './components/view/modal/Modal';
 // =====================
 // Gallery
 // =====================
-const galleryElement = ensureElement<HTMLElement>('.gallery');
-const gallery = new Gallery(galleryElement);
+// const galleryElement = ensureElement<HTMLElement>('.gallery');
+// const gallery = new Gallery(galleryElement);
 
 // =====================
 // Templates
 // =====================
-const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
-const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
-const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
-const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
-const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
-const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+// const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
+// const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+// const basketTemplate = ensureElement<HTMLTemplateElement>('#basket');
+// const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
+// const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+// const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 
 // =====================
 // Modal
 // =====================
-const events = new EventEmitter();
-const modalElement = ensureElement<HTMLElement>('#modal-container');
-const modal = new Modal(modalElement, events);
-
-events.on('modal:close-request', () => {
-  modal.close();
-  console.log('Modal closed');
-});
+// const events = new EventEmitter();
 
 // =====================
 // Helper: open preview
 // =====================
-function openPreview(data: {
-  title: string;
-  price: string;
-  category: string;
-  imageSrc: string;
-  imageAlt: string;
-}) {
-  const previewElement = cloneTemplate<HTMLElement>(previewTemplate);
+// function openPreview(data: {
+//   title: string;
+//   price: string;
+//   category: string;
+//   imageSrc: string;
+//   imageAlt: string;
+// }) {
+//   const previewElement = cloneTemplate<HTMLElement>(previewTemplate);
 
-  const preview = new CardPreview(previewElement, {
-    onActionRequest: () => {
-      console.log('Add to basket clicked');
-    },
-  });
+//   const preview = new CardPreview(previewElement, {
+//     onActionRequest: () => {
+//       console.log('Add to basket clicked');
+//     },
+//   });
 
-  preview.title = data.title;
-  preview.priceText = `${data.price} синапсов`;
-  preview.category = data.category;
-  preview.imageSrc = data.imageSrc;
-  preview.imageAlt = data.imageAlt;
-  preview.actionText = 'Купить';
-  preview.description =
-    'Если планируете решать задачи в тренажёре, берите два.';
+//   preview.title = data.title;
+//   preview.priceText = `${data.price} синапсов`;
+//   preview.category = data.category;
+//   preview.imageSrc = data.imageSrc;
+//   preview.imageAlt = data.imageAlt;
+//   preview.actionText = 'Купить';
+//   preview.description =
+//     'Если планируете решать задачи в тренажёре, берите два.';
 
-  modal.content = preview.render();
-  modal.open();
-}
+//   modal.content = preview.render();
+//   modal.open();
+// }
 
 // =====================
 // Helper: open basket
 // =====================
-function openBasket(items: typeof cardsData) {
-  const basketElement = cloneTemplate<HTMLElement>(basketTemplate);
-  const basket = new Basket(basketElement, {
-    onSubmitRequest: () => {
-      console.log('Basket submit');
-      openOrderForm();
-    },
-  });
+// function openBasket(items: typeof cardsData) {
+//   const basketElement = cloneTemplate<HTMLElement>(basketTemplate);
+//   const basket = new Basket(basketElement, {
+//     onSubmitRequest: () => {
+//       console.log('Basket submit');
+//       openOrderForm();
+//     },
+//   });
 
-  const basketCards = items.map((item, index) => {
-    const cardElement = cloneTemplate<HTMLElement>(basketCardTemplate);
-    const card = new CardBasket(cardElement, {
-      onRemoveRequest: () => {
-        console.log(`Remove item ${index + 1}`);
-      },
-    });
+//   const basketCards = items.map((item, index) => {
+//     const cardElement = cloneTemplate<HTMLElement>(basketCardTemplate);
+//     const card = new CardBasket(cardElement, {
+//       onRemoveRequest: () => {
+//         console.log(`Remove item ${index + 1}`);
+//       },
+//     });
 
-    card.index = index + 1;
-    card.title = item.title;
-    card.priceText = item.price;
+//     card.index = index + 1;
+//     card.title = item.title;
+//     card.priceText = item.price;
 
-    return card.render();
-  });
+//     return card.render();
+//   });
 
-  const total = items.reduce((sum, item) => sum + Number(item.price), 0);
+//   const total = items.reduce((sum, item) => sum + Number(item.price), 0);
 
-  basket.items = basketCards;
-  basket.total = total;
-  basket.submitDisabled = items.length === 0;
+//   basket.items = basketCards;
+//   basket.total = total;
+//   basket.submitDisabled = items.length === 0;
 
-  modal.content = basket.render();
-  modal.open();
-}
+//   modal.content = basket.render();
+//   modal.open();
+// }
 
-// =====================
-// Helper: open order form
-// =====================
-function openOrderForm() {
-  const orderElement = cloneTemplate<HTMLFormElement>(orderTemplate);
-  let payment: 'card' | 'cash' | null = null;
-  let address = '';
+// // =====================
+// // Helper: open order form
+// // =====================
+// function openOrderForm() {
+//   const orderElement = cloneTemplate<HTMLFormElement>(orderTemplate);
+//   let payment: 'card' | 'cash' | null = null;
+//   let address = '';
 
-  const orderForm = new FormOrder(orderElement, {
-    onFieldChange: (field, value) => {
-      if (field === 'payment' && (value === 'card' || value === 'cash')) {
-        payment = value;
-        orderForm.payment = payment;
-      }
+//   const orderForm = new FormOrder(orderElement, {
+//     onFieldChange: (field, value) => {
+//       if (field === 'payment' && (value === 'card' || value === 'cash')) {
+//         payment = value;
+//         orderForm.payment = payment;
+//       }
 
-      if (field === 'address') {
-        address = value;
-        orderForm.address = address;
-      }
+//       if (field === 'address') {
+//         address = value;
+//         orderForm.address = address;
+//       }
 
-      const errors: string[] = [];
+//       const errors: string[] = [];
 
-      if (!payment) {
-        errors.push('Выберите способ оплаты.');
-      }
+//       if (!payment) {
+//         errors.push('Выберите способ оплаты.');
+//       }
 
-      if (address.trim().length < 5) {
-        errors.push('Введите адрес доставки (минимум 5 символов).');
-      }
+//       if (address.trim().length < 5) {
+//         errors.push('Введите адрес доставки (минимум 5 символов).');
+//       }
 
-      orderForm.valid = errors.length === 0;
-      orderForm.errors = errors;
-    },
-    onSubmitRequest: () => {
-      console.log('Order submit', { payment, address });
-      openContactsForm();
-    },
-  });
+//       orderForm.valid = errors.length === 0;
+//       orderForm.errors = errors;
+//     },
+//     onSubmitRequest: () => {
+//       console.log('Order submit', { payment, address });
+//       openContactsForm();
+//     },
+//   });
 
-  orderForm.payment = payment;
-  orderForm.address = address;
-  orderForm.valid = false;
-  orderForm.errors = [];
+//   orderForm.payment = payment;
+//   orderForm.address = address;
+//   orderForm.valid = false;
+//   orderForm.errors = [];
 
-  modal.content = orderForm.render();
-  modal.open();
-}
+//   modal.content = orderForm.render();
+//   modal.open();
+// }
 
-// =====================
-// Helper: open contacts form
-// =====================
-function openContactsForm() {
-  const contactsElement = cloneTemplate<HTMLFormElement>(contactsTemplate);
-  let email = '';
-  let phone = '';
+// // =====================
+// // Helper: open contacts form
+// // =====================
+// function openContactsForm() {
+//   const contactsElement = cloneTemplate<HTMLFormElement>(contactsTemplate);
+//   let email = '';
+//   let phone = '';
 
-  const contactsForm = new FormContacts(contactsElement, {
-    onFieldChange: (field, value) => {
-      if (field === 'email') {
-        email = value;
-        contactsForm.email = email;
-      }
+//   const contactsForm = new FormContacts(contactsElement, {
+//     onFieldChange: (field, value) => {
+//       if (field === 'email') {
+//         email = value;
+//         contactsForm.email = email;
+//       }
 
-      if (field === 'phone') {
-        phone = value;
-        contactsForm.phone = phone;
-      }
+//       if (field === 'phone') {
+//         phone = value;
+//         contactsForm.phone = phone;
+//       }
 
-      const errors: string[] = [];
-      const emailValue = email.trim();
-      const phoneValue = phone.trim();
+//       const errors: string[] = [];
+//       const emailValue = email.trim();
+//       const phoneValue = phone.trim();
 
-      if (!emailValue.includes('@')) {
-        errors.push('Введите корректный email.');
-      }
+//       if (!emailValue.includes('@')) {
+//         errors.push('Введите корректный email.');
+//       }
 
-      if (phoneValue.replace(/\D/g, '').length < 10) {
-        errors.push('Введите корректный номер телефона.');
-      }
+//       if (phoneValue.replace(/\D/g, '').length < 10) {
+//         errors.push('Введите корректный номер телефона.');
+//       }
 
-      contactsForm.valid = errors.length === 0;
-      contactsForm.errors = errors;
-    },
-    onSubmitRequest: () => {
-      console.log('Contacts submit', { email, phone });
-      modal.close();
-    },
-  });
+//       contactsForm.valid = errors.length === 0;
+//       contactsForm.errors = errors;
+//     },
+//     onSubmitRequest: () => {
+//       console.log('Contacts submit', { email, phone });
+//       modal.close();
+//     },
+//   });
 
-  contactsForm.email = email;
-  contactsForm.phone = phone;
-  contactsForm.valid = false;
-  contactsForm.errors = [];
+//   contactsForm.email = email;
+//   contactsForm.phone = phone;
+//   contactsForm.valid = false;
+//   contactsForm.errors = [];
 
-  modal.content = contactsForm.render();
-  modal.open();
-}
+//   modal.content = contactsForm.render();
+//   modal.open();
+// }
 
-// =====================
-// Cards (Catalog)
-// =====================
-const cardsData = [
-  {
-    title: '+1 час в сутках',
-    price: '750',
-    category: 'софт-скил',
-    imageSrc:
-      'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80',
-    imageAlt: 'Изображение товара',
-  },
-  {
-    title: 'Фреймворк куки судьбы',
-    price: '2500',
-    category: 'хард-скил',
-    imageSrc:
-      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=640&q=80',
-    imageAlt: 'Изображение товара',
-  },
-  {
-    title: 'БЭМ-пилюлька',
-    price: '150000',
-    category: 'другое',
-    imageSrc:
-      'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80',
-    imageAlt: 'Изображение товара',
-  },
-];
+// // =====================
+// // Cards (Catalog)
+// // =====================
+// const cardsData = [
+//   {
+//     title: '+1 час в сутках',
+//     price: '750',
+//     category: 'софт-скил',
+//     imageSrc:
+//       'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=640&q=80',
+//     imageAlt: 'Изображение товара',
+//   },
+//   {
+//     title: 'Фреймворк куки судьбы',
+//     price: '2500',
+//     category: 'хард-скил',
+//     imageSrc:
+//       'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=640&q=80',
+//     imageAlt: 'Изображение товара',
+//   },
+//   {
+//     title: 'БЭМ-пилюлька',
+//     price: '150000',
+//     category: 'другое',
+//     imageSrc:
+//       'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=640&q=80',
+//     imageAlt: 'Изображение товара',
+//   },
+// ];
 
-const catalogCards = cardsData.map((data, index) => {
-  const cardElement = cloneTemplate<HTMLElement>(catalogTemplate);
+// const catalogCards = cardsData.map((data, index) => {
+//   const cardElement = cloneTemplate<HTMLElement>(catalogTemplate);
 
-  const card = new CardCatalog(cardElement, {
-    onSelectRequest: () => {
-      console.log(`Card ${index + 1} selected`);
-      openPreview(data);
-    },
-  });
+//   const card = new CardCatalog(cardElement, {
+//     onSelectRequest: () => {
+//       console.log(`Card ${index + 1} selected`);
+//       openPreview(data);
+//     },
+//   });
 
-  card.title = data.title;
-  card.priceText = data.price;
-  card.category = data.category;
-  card.imageSrc = data.imageSrc;
-  card.imageAlt = data.imageAlt;
+//   card.title = data.title;
+//   card.priceText = data.price;
+//   card.category = data.category;
+//   card.imageSrc = data.imageSrc;
+//   card.imageAlt = data.imageAlt;
 
-  return card.render();
-});
+//   return card.render();
+// });
 
-// =====================
-// Header
-// =====================
-const headerElement = ensureElement<HTMLElement>('.header');
-const header = new Header(headerElement, events);
+// // =====================
+// // Header
+// // =====================
+// const headerElement = ensureElement<HTMLElement>('.header');
+// const header = new Header(headerElement, events);
 
-events.on('basket:open', () => {
-  openBasket(cardsData.slice(0, 2));
-});
+// events.on('basket:open', () => {
+//   openBasket(cardsData.slice(0, 2));
+// });
 
-header.counter = 2;
+// header.counter = 2;
 
-// =====================
-// Render gallery
-// =====================
-gallery.catalog = catalogCards;
+// // =====================
+// // Render gallery
+// // =====================
+// gallery.catalog = catalogCards;
