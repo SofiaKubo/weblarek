@@ -52,7 +52,7 @@ export class Presenter {
   private bindEvents() {
     this.events.on('products:changed', this.onProductsChanged);
 
-    this.events.on('ui:product-clicked', this.onProductSelected);
+    this.events.on('ui:product-clicked', this.onProductClicked);
     this.events.on('products:selected-changed', this.onProductSelectedChanged);
     this.events.on('ui:product-action', this.onProductAction);
   }
@@ -66,7 +66,7 @@ export class Presenter {
     }
   }
 
-  private onProductsChanged = (items: IProduct[]) => {
+  private onProductsChanged = ({ items }: { items: IProduct[] }) => {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onSelectRequest: () => {
@@ -76,71 +76,64 @@ export class Presenter {
 
       return card.render({
         title: item.title,
-        priceText: `${item.price} синапсов`,
+        priceText: item.price === null ? 'Бесценно' : `${item.price} синапсов`,
         category: item.category,
-        imageSrc: item.image, // здесь вызвать метод для получения URL изображения, если нужно
+        imageSrc: item.image,
         imageAlt: item.title,
       });
     });
 
-    this.galleryView.render({
-      catalog: cardElements,
-    });
+    this.galleryView.render({ catalog: cardElements });
   };
 
-  private onProductSelected = (product: IProduct) => {
+  private onProductClicked = (product: IProduct) => {
     this.productsModel.setSelectedItem(product);
   };
 
-  private onProductSelectedChanged = (product: IProduct) => {
-    if (!product) return;
+  private onProductSelectedChanged = ({ item }: { item: IProduct | null }) => {
+    if (!item) return;
 
-    let priceText: string;
-    let actionText: string;
-    let actionDisabled: boolean;
-
-    if (product.price === null) {
-      priceText = 'Бесценно';
-      actionText = 'Недоступно';
-      actionDisabled = true;
-    } else if (this.basketModel.hasItem(product.id)) {
-      priceText = `${product.price} синапсов`;
-      actionText = 'Удалить из корзины';
-      actionDisabled = false;
-    } else {
-      priceText = `${product.price} синапсов`;
-      actionText = 'Купить';
-      actionDisabled = false;
-    }
+    const product = item;
+    const isPriceless = product.price === null;
+    const isInBasket = this.basketModel.hasItem(product.id);
 
     const cardView = new CardPreview(
       cloneTemplate(this.templates.cardPreview),
       {
         onActionRequest: () => {
-          this.events.emit('ui:product-action', product);
+          this.events.emit('ui:product-action', { product });
         },
       }
     );
 
-    this.modalView.content = cardView.render({
+    const content = cardView.render({
       title: product.title,
       description: product.description,
       imageSrc: product.image,
       imageAlt: product.title,
-      priceText,
+      priceText: isPriceless ? 'Бесценно' : `${product.price} синапсов`,
       category: product.category,
-      actionDisabled,
-      actionText,
+      actionDisabled: isPriceless,
+      actionText: isPriceless
+        ? 'Недоступно'
+        : isInBasket
+          ? 'Удалить из корзины'
+          : 'Купить',
     });
+
+    this.modalView.render({ content });
+
     this.modalView.open();
   };
 
-  private onProductAction = (product: IProduct) => {
+  private onProductAction = ({ product }: { product: IProduct }) => {
     if (product.price === null) {
       return;
     }
 
-    if (this.basketModel.hasItem(product.id)) {
+    const isInBasket = this.basketModel.hasItem(product.id);
+
+    if (isInBasket) {
       this.basketModel.removeItem(product.id);
     } else {
       this.basketModel.addItem(product);
