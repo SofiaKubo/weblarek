@@ -58,12 +58,13 @@ export class Presenter {
     this.events.on('ui:modal-close-request', this.onModalCloseRequest);
   }
 
-  private async loadInitialCatalog() {
+  private async loadInitialCatalog(): Promise<void> {
     try {
       const products = await this.webLarekApi.getProducts();
       this.productsModel.setItems(products);
-    } catch (error) {
-      console.error('Failed to load products:', error);
+    } catch {
+      this.productsModel.setItems([]);
+      // API failure — catalog stays empty, but app remains functional
     }
   }
 
