@@ -49,7 +49,7 @@ function createApp(): Presenter {
   });
 }
 
-function bootstrap(): void {
+function startApp(): void {
   try {
     // 7. Launch
     const presenter = createApp();
@@ -59,4 +59,4 @@ function bootstrap(): void {
   }
 }
 
-bootstrap();
+startApp();
