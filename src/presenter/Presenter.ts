@@ -54,10 +54,7 @@ export class Presenter {
 
   private bindEvents() {
     this.events.on('products:changed', this.onProductsChanged);
-
-    this.events.on('ui:product-clicked', this.onProductClicked);
     this.events.on('products:selected-changed', this.onProductSelectedChanged);
-    this.events.on('ui:product-action', this.onProductAction);
     this.events.on('ui:modal-close-request', this.onModalCloseRequest);
   }
 
@@ -74,7 +71,8 @@ export class Presenter {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onSelectRequest: () => {
-          this.events.emit('ui:product-clicked', { productId: item.id });
+          const product = this.productsModel.getItemById(item.id);
+          if (product) this.productsModel.setSelectedItem(product);
         },
       });
 
@@ -90,13 +88,6 @@ export class Presenter {
     this.galleryView.render({ catalog: cardElements });
   };
 
-  private onProductClicked = ({ productId }: { productId: string }) => {
-    const product = this.productsModel.getItemById(productId);
-    if (!product) return;
-
-    this.productsModel.setSelectedItem(product);
-  };
-
   private onProductSelectedChanged = ({ item }: { item: IProduct | null }) => {
     if (!item) return;
 
@@ -108,7 +99,7 @@ export class Presenter {
       cloneTemplate(this.templates.cardPreview),
       {
         onActionRequest: () => {
-          this.events.emit('ui:product-action', { product });
+          this.handleProductAction({ product });
         },
       }
     );
@@ -135,7 +126,7 @@ export class Presenter {
     this.modalView.open();
   };
 
-  private onProductAction = ({ product }: { product: IProduct }) => {
+  private handleProductAction = ({ product }: { product: IProduct }) => {
     if (product.price === null) {
       return;
     }
