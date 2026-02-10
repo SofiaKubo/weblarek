@@ -5,14 +5,10 @@ import { API_URL } from './utils/constants';
 import { CDN_URL } from './utils/constants';
 import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
-import { Header } from './components/view/header/Header';
 import { Modal } from './components/view/modal/Modal';
-import { CardPreview } from './components/view/cards/CardPreview';
-import { CardCatalog } from './components/view/cards/CardCatalog';
 import { Presenter } from './presenter/Presenter';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
-import { cloneTemplate } from './utils/utils';
 import { BasketModel } from './components/models/BasketModel';
 
 // 1. Infrastructure
