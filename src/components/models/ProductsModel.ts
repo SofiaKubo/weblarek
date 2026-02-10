@@ -13,7 +13,7 @@ export class ProductsModel {
   setItems(items: IProduct[]): void {
     this.items = items;
 
-    this.events.emit('catalog:changed', {
+    this.events.emit('products:changed', {
       items: this.items,
     });
   }
@@ -29,7 +29,7 @@ export class ProductsModel {
   setSelectedItem(item: IProduct | null): void {
     this.selectedItem = item;
 
-    this.events.emit('product:selected', {
+    this.events.emit('products:selected-changed', {
       item: this.selectedItem,
     });
   }
