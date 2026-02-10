@@ -138,6 +138,8 @@ export class Presenter {
     } else {
       this.basketModel.addItem(product);
     }
+
+    this.modalView.close();
   };
 
   private onModalCloseRequest = () => {
