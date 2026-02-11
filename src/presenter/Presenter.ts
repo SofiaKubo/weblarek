@@ -180,6 +180,6 @@ export class Presenter {
   private handleBasketStateChanged = ({
     items,
   }: BasketStateChangedEvent) => {
-    this.headerView.render({ counter: items.length });
+    this.headerView.counter = items.length;
   };
 }
