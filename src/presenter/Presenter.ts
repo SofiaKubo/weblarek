@@ -102,7 +102,7 @@ export class Presenter {
     products,
   }: ProductsListChangedEvent) => {
     const cardElements = this.buildCatalogCardElements(products);
-    this.renderCatalog(cardElements);
+    this.galleryView.render({ catalog: cardElements });
   };
 
   private handleProductSelectionChanged = ({
@@ -119,7 +119,14 @@ export class Presenter {
       return;
     }
 
-    this.toggleProductInBasket(product);
+    const isInBasket = this.basketModel.hasItem(product.id);
+
+    if (isInBasket) {
+      this.basketModel.removeItem(product.id);
+    } else {
+      this.basketModel.addItem(product);
+    }
+
     this.handleModalCloseTriggered();
   };
 
@@ -133,7 +140,7 @@ export class Presenter {
   };
 
   private handleBasketStateChanged = ({ items }: BasketStateChangedEvent) => {
-    this.updateHeaderCounter(items.length);
+    this.headerView.counter = items.length;
     this.refreshBasketModalIfOpen();
   };
 
@@ -156,10 +163,6 @@ export class Presenter {
         imageAlt: product.title,
       });
     });
-  };
-
-  private renderCatalog = (cardElements: HTMLElement[]) => {
-    this.galleryView.render({ catalog: cardElements });
   };
 
   private getProductPreviewState = (product: IProduct) => {
@@ -275,17 +278,4 @@ export class Presenter {
     this.showBasket();
   };
 
-  private updateHeaderCounter = (count: number) => {
-    this.headerView.counter = count;
-  };
-
-  private toggleProductInBasket = (product: IProduct) => {
-    const isInBasket = this.basketModel.hasItem(product.id);
-
-    if (isInBasket) {
-      this.basketModel.removeItem(product.id);
-    } else {
-      this.basketModel.addItem(product);
-    }
-  };
 }
