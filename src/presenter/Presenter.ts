@@ -1,21 +1,24 @@
-import type { IEvents } from '../components/base/Events';
 import type { WebLarekApi } from '../api/WebLarekApi';
-import type { ProductsModel } from '../components/models/ProductsModel';
-import type { Gallery } from '../components/view/gallery/Gallery';
-import type { Modal } from '../components/view/modal/Modal';
-import type { Header } from '../components/view/header/Header';
-import { CardCatalog } from '../components/view/cards/CardCatalog';
-import { IProduct } from '../types';
-import { cloneTemplate } from '../utils/utils';
-import { CardPreview } from '../components/view/cards/CardPreview';
+import type { IEvents } from '../components/base/Events';
 import { BasketModel } from '../components/models/BasketModel';
+import type { BuyerModel } from '../components/models/BuyerModel';
+import type { ProductsModel } from '../components/models/ProductsModel';
+import { FormOrder } from '../components/view/forms/FormOrder';
+import { Basket } from '../components/view/basket/Basket';
+import { CardBasket } from '../components/view/cards/CardBasket';
+import { CardCatalog } from '../components/view/cards/CardCatalog';
+import { CardPreview } from '../components/view/cards/CardPreview';
+import type { Gallery } from '../components/view/gallery/Gallery';
+import type { Header } from '../components/view/header/Header';
+import type { Modal } from '../components/view/modal/Modal';
+
+import { IProduct } from '../types';
 import type {
   BasketStateChangedEvent,
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
 } from '../types/events';
-import { Basket } from '../components/view/basket/Basket';
-import { CardBasket } from '../components/view/cards/CardBasket';
+import { cloneTemplate } from '../utils/utils';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -23,6 +26,7 @@ type PresenterDependencies = {
   imageBaseUrl: string;
   productsModel: ProductsModel;
   basketModel: BasketModel;
+  buyerModel: BuyerModel;
   galleryView: Gallery;
   modalView: Modal;
   headerView: Header;
@@ -31,6 +35,9 @@ type PresenterDependencies = {
     cardPreview: HTMLTemplateElement;
     basket: HTMLTemplateElement;
     cardBasket: HTMLTemplateElement;
+    order: HTMLTemplateElement;
+    contacts: HTMLTemplateElement;
+    success: HTMLTemplateElement;
   };
 };
 
@@ -40,6 +47,7 @@ export class Presenter {
   private imageBaseUrl: string;
   private productsModel: ProductsModel;
   private basketModel: BasketModel;
+  private buyerModel: BuyerModel;
   private galleryView: Gallery;
   private modalView: Modal;
   private headerView: Header;
@@ -49,6 +57,9 @@ export class Presenter {
     cardPreview: HTMLTemplateElement;
     basket: HTMLTemplateElement;
     cardBasket: HTMLTemplateElement;
+    order: HTMLTemplateElement;
+    contacts: HTMLTemplateElement;
+    success: HTMLTemplateElement;
   };
 
   constructor(deps: PresenterDependencies) {
@@ -57,6 +68,7 @@ export class Presenter {
     this.imageBaseUrl = deps.imageBaseUrl;
     this.productsModel = deps.productsModel;
     this.basketModel = deps.basketModel;
+    this.buyerModel = deps.buyerModel;
     this.galleryView = deps.galleryView;
     this.modalView = deps.modalView;
     this.headerView = deps.headerView;
@@ -86,6 +98,8 @@ export class Presenter {
       this.handleBasketStateChanged
     );
     this.events.on('basket:icon-clicked', this.handleBasketIconClick);
+
+    this.events.on('basket:checkout-clicked', this.handleBasketCheckoutClick);
     this.events.on('modal:close-triggered', this.handleModalCloseTriggered);
   }
 
@@ -179,16 +193,21 @@ export class Presenter {
     product: IProduct,
     state: { isPriceless: boolean; isInBasket: boolean }
   ): HTMLElement => {
-    const cardView = new CardPreview(cloneTemplate(this.templates.cardPreview), {
-      onActionClick: () => {
-        this.handleProductActionClick({ product });
-      },
-    });
+    const cardView = new CardPreview(
+      cloneTemplate(this.templates.cardPreview),
+      {
+        onActionClick: () => {
+          this.handleProductActionClick({ product });
+        },
+      }
+    );
 
     return cardView.render({
       title: product.title,
       description: product.description,
-      imageSrc: product.image ? `${this.imageBaseUrl}/${product.image}` : undefined,
+      imageSrc: product.image
+        ? `${this.imageBaseUrl}/${product.image}`
+        : undefined,
       imageAlt: product.title,
       priceText: state.isPriceless ? 'Бесценно' : `${product.price} синапсов`,
       category: product.category,
@@ -250,15 +269,13 @@ export class Presenter {
       cloneTemplate(this.templates.basket),
       this.events
     );
-
     const content = basket.render({
       items: cardElements,
       total,
       submitDisabled: isBasketEmpty,
     });
-    this.modalView.content = content;
 
-    this.modalView.open();
+    this.showModalContent(content);
   };
 
   private showBasket = () => {
@@ -278,4 +295,42 @@ export class Presenter {
     this.showBasket();
   };
 
+  private handleBasketCheckoutClick = () => {
+    const isBasketEmpty = this.basketModel.getItemsCount() === 0;
+
+    if (isBasketEmpty) return;
+    this.isBasketViewOpen = false;
+    const { payment, address } = this.buyerModel.getData();
+    const allErrors = this.buyerModel.validate();
+
+    const orderStepErrors = {
+      payment: allErrors.payment,
+      address: allErrors.address,
+    };
+
+    const orderStepErrorMessages = Object.values(orderStepErrors).filter(
+      (message): message is string => message !== undefined
+    );
+
+    const isOrderStepValid =
+      orderStepErrorMessages.length === 0 &&
+      payment !== null &&
+      address.trim().length > 0;
+
+    const orderForm = new FormOrder(
+      cloneTemplate(this.templates.order),
+      this.events
+    );
+    orderForm.payment = payment;
+    orderForm.address = address;
+
+    const content = orderForm.render({
+      valid: isOrderStepValid,
+      errors: orderStepErrorMessages,
+    });
+
+    this.showModalContent(content);
+  };
 }
+
+

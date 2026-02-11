@@ -3,13 +3,14 @@ import { WebLarekApi } from './api/WebLarekApi';
 import { Api } from './components/base/Api';
 import { API_URL, CDN_URL } from './utils/constants';
 import { ProductsModel } from './components/models/ProductsModel';
+import { BasketModel } from './components/models/BasketModel';
+import { BuyerModel } from './components/models/BuyerModel';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Modal } from './components/view/modal/Modal';
 import { Header } from './components/view/header/Header';
 import { Presenter } from './presenter/Presenter';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
-import { BasketModel } from './components/models/BasketModel';
 
 function bootstrapApp(): Presenter {
   // 1. Infrastructure
@@ -21,6 +22,7 @@ function bootstrapApp(): Presenter {
   // 2. Models
   const productsModel = new ProductsModel(events);
   const basketModel = new BasketModel(events);
+  const buyerModel = new BuyerModel(events);
 
   // 3. DOM containers (queried once at startup)
   const galleryContainer = ensureElement<HTMLElement>('.gallery');
@@ -32,6 +34,9 @@ function bootstrapApp(): Presenter {
   const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
   const basketViewTemplate = ensureElement<HTMLTemplateElement>('#basket');
   const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
+  const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
+  const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
+  const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
   // 5. Views (long-lived container components)
   const galleryView = new Gallery(galleryContainer);
@@ -45,6 +50,7 @@ function bootstrapApp(): Presenter {
     imageBaseUrl,
     productsModel,
     basketModel,
+    buyerModel,
     galleryView,
     modalView,
     headerView,
@@ -53,6 +59,9 @@ function bootstrapApp(): Presenter {
       cardPreview: previewTemplate,
       basket: basketViewTemplate,
       cardBasket: basketCardTemplate,
+      order: orderTemplate,
+      contacts: contactsTemplate,
+      success: successTemplate,
     },
   });
 }
