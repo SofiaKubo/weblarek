@@ -5,6 +5,7 @@ import { API_URL, CDN_URL } from './utils/constants';
 import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
 import { Modal } from './components/view/modal/Modal';
+import { Header } from './components/view/header/Header';
 import { Presenter } from './presenter/Presenter';
 import './scss/styles.scss';
 import { ensureElement } from './utils/utils';
@@ -24,14 +25,18 @@ function bootstrapApp(): Presenter {
   // 3. DOM containers (queried once at startup)
   const galleryContainer = ensureElement<HTMLElement>('.gallery');
   const modalContainer = ensureElement<HTMLElement>('#modal-container');
+  const headerContainer = ensureElement<HTMLElement>('.header');
 
   // 4. Templates
   const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
   const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
+  const basketViewTemplate = ensureElement<HTMLTemplateElement>('#basket');
+  const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
 
   // 5. Views (long-lived container components)
   const galleryView = new Gallery(galleryContainer);
   const modalView = new Modal(modalContainer, events);
+  const headerView = new Header(headerContainer, events);
 
   // 6. Presenter
   return new Presenter({
@@ -42,9 +47,12 @@ function bootstrapApp(): Presenter {
     basketModel,
     galleryView,
     modalView,
+    headerView,
     templates: {
       cardCatalog: catalogTemplate,
       cardPreview: previewTemplate,
+      basket: basketViewTemplate,
+      cardBasket: basketCardTemplate,
     },
   });
 }

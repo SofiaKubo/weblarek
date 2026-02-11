@@ -3,12 +3,14 @@ import type { WebLarekApi } from '../api/WebLarekApi';
 import type { ProductsModel } from '../components/models/ProductsModel';
 import type { Gallery } from '../components/view/gallery/Gallery';
 import type { Modal } from '../components/view/modal/Modal';
+import type { Header } from '../components/view/header/Header';
 import { CardCatalog } from '../components/view/cards/CardCatalog';
 import { IProduct } from '../types';
 import { cloneTemplate } from '../utils/utils';
 import { CardPreview } from '../components/view/cards/CardPreview';
 import { BasketModel } from '../components/models/BasketModel';
 import type {
+  BasketStateChangedEvent,
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
 } from '../types/events';
@@ -21,9 +23,12 @@ type PresenterDependencies = {
   basketModel: BasketModel;
   galleryView: Gallery;
   modalView: Modal;
+  headerView: Header;
   templates: {
     cardCatalog: HTMLTemplateElement;
     cardPreview: HTMLTemplateElement;
+    basket: HTMLTemplateElement;
+    cardBasket: HTMLTemplateElement;
   };
 };
 
@@ -35,9 +40,12 @@ export class Presenter {
   private basketModel: BasketModel;
   private galleryView: Gallery;
   private modalView: Modal;
+  private headerView: Header;
   private templates: {
     cardCatalog: HTMLTemplateElement;
     cardPreview: HTMLTemplateElement;
+    basket: HTMLTemplateElement;
+    cardBasket: HTMLTemplateElement;
   };
 
   constructor(deps: PresenterDependencies) {
@@ -48,11 +56,13 @@ export class Presenter {
     this.basketModel = deps.basketModel;
     this.galleryView = deps.galleryView;
     this.modalView = deps.modalView;
+    this.headerView = deps.headerView;
     this.templates = deps.templates;
   }
 
   init() {
     this.bindEvents();
+    this.headerView.render({ counter: this.basketModel.getItemsCount() });
     void this.loadInitialCatalog();
   }
 
@@ -64,6 +74,10 @@ export class Presenter {
     this.events.on<ProductSelectionChangedEvent>(
       'products:selection-changed',
       this.handleProductSelectionChanged
+    );
+    this.events.on<BasketStateChangedEvent>(
+      'basket:state-changed',
+      this.handleBasketStateChanged
     );
     this.events.on('modal:close-triggered', this.handleModalCloseTriggered);
   }
@@ -158,5 +172,11 @@ export class Presenter {
 
   private handleModalCloseTriggered = () => {
     this.modalView.close();
+  };
+
+  private handleBasketStateChanged = ({
+    items,
+  }: BasketStateChangedEvent) => {
+    this.headerView.render({ counter: items.length });
   };
 }
