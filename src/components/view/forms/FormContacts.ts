@@ -1,4 +1,4 @@
-import type { IFormActions } from './types';
+import type { IEvents } from '../../base/Events';
 import { FormBase } from './FormBase';
 import { ensureElement } from '../../../utils/utils';
 
@@ -6,8 +6,8 @@ export class FormContacts extends FormBase {
   private readonly emailInput: HTMLInputElement;
   private readonly phoneInput: HTMLInputElement;
 
-  constructor(container: HTMLFormElement, actions: IFormActions) {
-    super(container, actions);
+  constructor(container: HTMLFormElement, events: IEvents) {
+    super(container, events);
 
     this.emailInput = ensureElement<HTMLInputElement>(
       'input[name="email"]',
