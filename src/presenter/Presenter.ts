@@ -101,26 +101,8 @@ export class Presenter {
   private handleProductsListChanged = ({
     products,
   }: ProductsListChangedEvent) => {
-    const cardElements = products.map((product) => {
-      const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
-        onCardClick: () => {
-          this.productsModel.setSelectedItem(product);
-        },
-      });
-
-      return card.render({
-        title: product.title,
-        priceText:
-          product.price === null ? 'Бесценно' : `${product.price} синапсов`,
-        category: product.category,
-        imageSrc: product.image
-          ? `${this.imageBaseUrl}/${product.image}`
-          : undefined,
-        imageAlt: product.title,
-      });
-    });
-
-    this.galleryView.render({ catalog: cardElements });
+    const cardElements = this.buildCatalogCardElements(products);
+    this.renderCatalog(cardElements);
   };
 
   private handleProductSelectionChanged = ({
@@ -274,5 +256,30 @@ export class Presenter {
   private showModalContent = (content: HTMLElement) => {
     this.modalView.content = content;
     this.modalView.open();
+  };
+
+  private buildCatalogCardElements = (products: IProduct[]): HTMLElement[] => {
+    return products.map((product) => {
+      const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
+        onCardClick: () => {
+          this.productsModel.setSelectedItem(product);
+        },
+      });
+
+      return card.render({
+        title: product.title,
+        priceText:
+          product.price === null ? 'Бесценно' : `${product.price} синапсов`,
+        category: product.category,
+        imageSrc: product.image
+          ? `${this.imageBaseUrl}/${product.image}`
+          : undefined,
+        imageAlt: product.title,
+      });
+    });
+  };
+
+  private renderCatalog = (cardElements: HTMLElement[]) => {
+    this.galleryView.render({ catalog: cardElements });
   };
 }
