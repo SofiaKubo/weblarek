@@ -1,5 +1,9 @@
 import { IProduct } from '../../types/index';
 import { IEvents } from '../../components/base/Events';
+import type {
+  ProductSelectionChangedEvent,
+  ProductsListChangedEvent,
+} from '../../types/events';
 
 export class ProductsModel {
   private items: IProduct[];
@@ -13,7 +17,7 @@ export class ProductsModel {
   setItems(items: IProduct[]): void {
     this.items = items;
 
-    this.events.emit('products:list-changed', {
+    this.events.emit<ProductsListChangedEvent>('products:list-changed', {
       items: this.items,
     });
   }
@@ -29,9 +33,12 @@ export class ProductsModel {
   setSelectedItem(item: IProduct | null): void {
     this.selectedItem = item;
 
-    this.events.emit('products:selection-changed', {
+    this.events.emit<ProductSelectionChangedEvent>(
+      'products:selection-changed',
+      {
       item: this.selectedItem,
-    });
+      }
+    );
   }
 
   getSelectedItem(): IProduct | null {

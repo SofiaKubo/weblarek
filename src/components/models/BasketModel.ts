@@ -1,5 +1,6 @@
 import { IProduct } from '../../types/index';
 import { IEvents } from '../../components/base/Events';
+import type { BasketStateChangedEvent } from '../../types/events';
 export class BasketModel {
   private items: IProduct[];
 
@@ -41,7 +42,7 @@ export class BasketModel {
   }
 
   private emitChange(): void {
-    this.events.emit('basket:state-changed', {
+    this.events.emit<BasketStateChangedEvent>('basket:state-changed', {
       items: this.items,
       total: this.getTotalPrice(),
     });

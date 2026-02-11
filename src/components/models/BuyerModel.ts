@@ -1,6 +1,7 @@
 import { TPayment } from '../../types/index';
 import { IBuyer } from '../../types/index';
 import { IEvents } from '../../components/base/Events';
+import type { BuyerDataChangedEvent } from '../../types/events';
 export class BuyerModel {
   private payment: TPayment | null;
   private email: string;
@@ -68,7 +69,7 @@ export class BuyerModel {
   }
 
   private emitChange(): void {
-    this.events.emit('buyer:data-changed', {
+    this.events.emit<BuyerDataChangedEvent>('buyer:data-changed', {
       buyer: this.getData(),
     });
   }

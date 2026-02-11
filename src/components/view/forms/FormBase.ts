@@ -2,6 +2,10 @@ import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
 import type { IFormBaseData } from './types';
 import type { IEvents } from '../../base/Events';
+import type {
+  FormFieldChangedEvent,
+  FormSubmitTriggeredEvent,
+} from '../../../types/events';
 
 export abstract class FormBase extends Component<IFormBaseData> {
   protected readonly formElement: HTMLFormElement;
@@ -31,7 +35,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
   protected bindEvents(): void {
     this.formElement.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      this.events.emit('form:submit-triggered', {
+      this.events.emit<FormSubmitTriggeredEvent>('form:submit-triggered', {
         form: this.formElement.name,
       });
     });
@@ -42,7 +46,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
       if (!(target instanceof HTMLInputElement)) return;
       if (!target.name) return;
 
-      this.events.emit('form:field-changed', {
+      this.events.emit<FormFieldChangedEvent>('form:field-changed', {
         form: this.formElement.name,
         field: target.name,
         value: target.value,

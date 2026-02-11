@@ -1,6 +1,7 @@
 import { FormBase } from './FormBase';
 import { ensureElement } from '../../../utils/utils';
 import type { IEvents } from '../../base/Events';
+import type { FormFieldChangedEvent } from '../../../types/events';
 
 export class FormOrder extends FormBase {
   private readonly cardButton: HTMLButtonElement;
@@ -26,7 +27,7 @@ export class FormOrder extends FormBase {
     );
 
     this.cardButton.addEventListener('click', () => {
-      events.emit('form:field-changed', {
+      events.emit<FormFieldChangedEvent>('form:field-changed', {
         form: this.formElement.name,
         field: 'payment',
         value: 'card',
@@ -34,7 +35,7 @@ export class FormOrder extends FormBase {
     });
 
     this.cashButton.addEventListener('click', () => {
-      events.emit('form:field-changed', {
+      events.emit<FormFieldChangedEvent>('form:field-changed', {
         form: this.formElement.name,
         field: 'payment',
         value: 'cash',

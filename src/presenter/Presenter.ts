@@ -8,6 +8,10 @@ import { IProduct } from '../types';
 import { cloneTemplate } from '../utils/utils';
 import { CardPreview } from '../components/view/cards/CardPreview';
 import { BasketModel } from '../components/models/BasketModel';
+import type {
+  ProductSelectionChangedEvent,
+  ProductsListChangedEvent,
+} from '../types/events';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -53,8 +57,11 @@ export class Presenter {
   }
 
   private bindEvents() {
-    this.events.on('products:list-changed', this.handleProductsListChanged);
-    this.events.on(
+    this.events.on<ProductsListChangedEvent>(
+      'products:list-changed',
+      this.handleProductsListChanged
+    );
+    this.events.on<ProductSelectionChangedEvent>(
       'products:selection-changed',
       this.handleProductSelectionChanged
     );
@@ -71,7 +78,7 @@ export class Presenter {
     }
   }
 
-  private handleProductsListChanged = ({ items }: { items: IProduct[] }) => {
+  private handleProductsListChanged = ({ items }: ProductsListChangedEvent) => {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onCardClick: () => {
@@ -93,9 +100,7 @@ export class Presenter {
 
   private handleProductSelectionChanged = ({
     item,
-  }: {
-    item: IProduct | null;
-  }) => {
+  }: ProductSelectionChangedEvent) => {
     if (!item) return;
 
     const product = item;
