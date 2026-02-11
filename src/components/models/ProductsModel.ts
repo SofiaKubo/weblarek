@@ -18,7 +18,7 @@ export class ProductsModel {
     this.items = items;
 
     this.events.emit<ProductsListChangedEvent>('products:list-changed', {
-      items: this.items,
+      products: this.items,
     });
   }
 
@@ -36,7 +36,7 @@ export class ProductsModel {
     this.events.emit<ProductSelectionChangedEvent>(
       'products:selection-changed',
       {
-      item: this.selectedItem,
+        product: this.selectedItem,
       }
     );
   }

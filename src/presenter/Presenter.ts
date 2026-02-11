@@ -78,20 +78,25 @@ export class Presenter {
     }
   }
 
-  private handleProductsListChanged = ({ items }: ProductsListChangedEvent) => {
-    const cardElements = items.map((item) => {
+  private handleProductsListChanged = ({
+    products,
+  }: ProductsListChangedEvent) => {
+    const cardElements = products.map((product) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
         onCardClick: () => {
-          this.productsModel.setSelectedItem(item);
+          this.productsModel.setSelectedItem(product);
         },
       });
 
       return card.render({
-        title: item.title,
-        priceText: item.price === null ? 'Бесценно' : `${item.price} синапсов`,
-        category: item.category,
-        imageSrc: item.image ? `${this.imageBaseUrl}/${item.image}` : undefined,
-        imageAlt: item.title,
+        title: product.title,
+        priceText:
+          product.price === null ? 'Бесценно' : `${product.price} синапсов`,
+        category: product.category,
+        imageSrc: product.image
+          ? `${this.imageBaseUrl}/${product.image}`
+          : undefined,
+        imageAlt: product.title,
       });
     });
 
@@ -99,11 +104,9 @@ export class Presenter {
   };
 
   private handleProductSelectionChanged = ({
-    item,
+    product,
   }: ProductSelectionChangedEvent) => {
-    if (!item) return;
-
-    const product = item;
+    if (!product) return;
     const isPriceless = product.price === null;
     const isInBasket = this.basketModel.hasItem(product.id);
 

@@ -1,11 +1,11 @@
 import type { IBuyer, IProduct } from './index';
 
 export interface ProductsListChangedEvent {
-  items: IProduct[];
+  products: IProduct[];
 }
 
 export interface ProductSelectionChangedEvent {
-  item: IProduct | null;
+  product: IProduct | null;
 }
 
 export interface BasketStateChangedEvent {
