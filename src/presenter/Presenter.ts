@@ -14,6 +14,8 @@ import type {
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
 } from '../types/events';
+import { Basket } from '../components/view/basket/Basket';
+import { CardBasket } from '../components/view/cards/CardBasket';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -82,6 +84,7 @@ export class Presenter {
       'basket:state-changed',
       this.handleBasketStateChanged
     );
+    this.events.on('basket:icon-clicked', this.handleBasketIconClick);
     this.events.on('modal:close-triggered', this.handleModalCloseTriggered);
   }
 
@@ -177,9 +180,74 @@ export class Presenter {
     this.modalView.close();
   };
 
-  private handleBasketStateChanged = ({
-    items,
-  }: BasketStateChangedEvent) => {
+  private handleBasketStateChanged = ({ items }: BasketStateChangedEvent) => {
     this.headerView.counter = items.length;
+  };
+
+  private getBasketState = (): {
+    basketItems: IProduct[];
+    total: number;
+    isBasketEmpty: boolean;
+  } => {
+    const basketItems = this.basketModel.getItems();
+    const total = this.basketModel.getTotalPrice();
+    const isBasketEmpty = basketItems.length === 0;
+
+    return {
+      basketItems,
+      total,
+      isBasketEmpty,
+    };
+  };
+
+  private buildBasketCardElements = (items: IProduct[]): HTMLElement[] => {
+    return items.map((item, index) => {
+      const basketCardView = new CardBasket(
+        cloneTemplate(this.templates.cardBasket),
+        {
+          onRemoveClick: () => {
+            this.basketModel.removeItem(item.id);
+          },
+        }
+      );
+
+      return basketCardView.render({
+        index: index + 1,
+        title: item.title,
+        priceText: `${item.price} синапсов`,
+      });
+    });
+  };
+
+  private renderBasketModal = (
+    cardElements: HTMLElement[],
+    total: number,
+    isBasketEmpty: boolean
+  ) => {
+    const basket = new Basket(
+      cloneTemplate(this.templates.basket),
+      this.events
+    );
+
+    const content = basket.render({
+      items: cardElements,
+      total,
+      submitDisabled: isBasketEmpty,
+    });
+    this.modalView.content = content;
+
+    this.modalView.open();
+  };
+
+  private showBasket = () => {
+    const { basketItems, total, isBasketEmpty } = this.getBasketState();
+
+    const cardElements = this.buildBasketCardElements(basketItems);
+
+    this.renderBasketModal(cardElements, total, isBasketEmpty);
+  };
+
+  private handleBasketIconClick = () => {
+    this.showBasket();
   };
 }
