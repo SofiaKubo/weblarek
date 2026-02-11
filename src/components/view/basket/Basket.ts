@@ -1,13 +1,14 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import type { IBasketActions, IBasketData } from './types';
+import type { IBasketData } from './types';
+import type { IEvents } from '../../base/Events';
 
 export class Basket extends Component<IBasketData> {
   private readonly listElement: HTMLElement;
   private readonly totalElement: HTMLElement;
   private readonly submitButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, actions: IBasketActions) {
+  constructor(container: HTMLElement, private readonly events: IEvents) {
     super(container);
 
     this.listElement = ensureElement<HTMLElement>(
@@ -25,7 +26,9 @@ export class Basket extends Component<IBasketData> {
       this.container
     );
 
-    this.submitButton.addEventListener('click', actions.onSubmitRequest);
+    this.submitButton.addEventListener('click', () => {
+      this.events.emit('basket:checkout-clicked');
+    });
   }
 
   set items(cards: HTMLElement[]) {

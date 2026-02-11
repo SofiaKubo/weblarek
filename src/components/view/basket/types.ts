@@ -3,7 +3,3 @@ export interface IBasketData {
   total: number;
   submitDisabled: boolean;
 }
-
-export interface IBasketActions {
-  onSubmitRequest: () => void;
-}
