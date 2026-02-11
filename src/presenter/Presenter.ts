@@ -43,6 +43,7 @@ export class Presenter {
   private galleryView: Gallery;
   private modalView: Modal;
   private headerView: Header;
+  private isBasketViewOpen = false;
   private templates: {
     cardCatalog: HTMLTemplateElement;
     cardPreview: HTMLTemplateElement;
@@ -178,10 +179,15 @@ export class Presenter {
 
   private handleModalCloseTriggered = () => {
     this.modalView.close();
+    this.isBasketViewOpen = false;
   };
 
   private handleBasketStateChanged = ({ items }: BasketStateChangedEvent) => {
     this.headerView.counter = items.length;
+
+    if (this.isBasketViewOpen) {
+      this.showBasket();
+    }
   };
 
   private getBasketState = (): {
@@ -240,6 +246,8 @@ export class Presenter {
   };
 
   private showBasket = () => {
+    this.isBasketViewOpen = true;
+
     const { basketItems, total, isBasketEmpty } = this.getBasketState();
 
     const cardElements = this.buildBasketCardElements(basketItems);
