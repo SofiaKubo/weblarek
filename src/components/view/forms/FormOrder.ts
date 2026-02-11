@@ -1,14 +1,14 @@
 import { FormBase } from './FormBase';
 import { ensureElement } from '../../../utils/utils';
-import type { IFormActions } from './types';
+import type { IEvents } from '../../base/Events';
 
 export class FormOrder extends FormBase {
   private readonly cardButton: HTMLButtonElement;
   private readonly cashButton: HTMLButtonElement;
   private readonly addressInput: HTMLInputElement;
 
-  constructor(container: HTMLFormElement, actions: IFormActions) {
-    super(container, actions);
+  constructor(container: HTMLFormElement, events: IEvents) {
+    super(container, events);
 
     this.cardButton = ensureElement<HTMLButtonElement>(
       'button[name="card"]',
@@ -26,11 +26,19 @@ export class FormOrder extends FormBase {
     );
 
     this.cardButton.addEventListener('click', () => {
-      actions.onFieldChange('payment', 'card');
+      events.emit('form:field-changed', {
+        form: this.formElement.name,
+        field: 'payment',
+        value: 'card',
+      });
     });
 
     this.cashButton.addEventListener('click', () => {
-      actions.onFieldChange('payment', 'cash');
+      events.emit('form:field-changed', {
+        form: this.formElement.name,
+        field: 'payment',
+        value: 'cash',
+      });
     });
   }
 
