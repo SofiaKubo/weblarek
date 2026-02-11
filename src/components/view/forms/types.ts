@@ -1,5 +1,3 @@
-import type { TPayment } from '../../../types';
-
 export interface IFormBaseData {
   valid: boolean;
   errors: string[];
@@ -8,14 +6,4 @@ export interface IFormBaseData {
 export interface IFormActions {
   onSubmit: () => void;
   onFieldInput: (field: string, value: string) => void;
-}
-
-export interface IFormContactsData extends IFormBaseData {
-  email: string;
-  phone: string;
-}
-
-export interface IFormOrderData extends IFormBaseData {
-  payment: TPayment | null;
-  address: string;
 }
