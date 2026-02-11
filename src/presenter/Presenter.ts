@@ -53,9 +53,9 @@ export class Presenter {
   }
 
   private bindEvents() {
-    this.events.on('products:changed', this.onProductsChanged);
-    this.events.on('products:selected-changed', this.onProductSelectedChanged);
-    this.events.on('ui:modal-close-request', this.onModalCloseRequest);
+    this.events.on('products:list-changed', this.onProductsChanged);
+    this.events.on('products:selection-changed', this.onProductSelectedChanged);
+    this.events.on('modal:close-triggered', this.onModalCloseRequest);
   }
 
   private async loadInitialCatalog(): Promise<void> {

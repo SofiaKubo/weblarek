@@ -68,7 +68,7 @@ export class BuyerModel {
   }
 
   private emitChange(): void {
-    this.events.emit('buyer:changed', {
+    this.events.emit('buyer:data-changed', {
       buyer: this.getData(),
     });
   }

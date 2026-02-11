@@ -41,7 +41,7 @@ export class BasketModel {
   }
 
   private emitChange(): void {
-    this.events.emit('basket:changed', {
+    this.events.emit('basket:state-changed', {
       items: this.items,
       total: this.getTotalPrice(),
     });
