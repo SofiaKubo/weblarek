@@ -1,3 +1,5 @@
+import type { TPayment } from '../../../types';
+
 export interface IFormBaseData {
   valid: boolean;
   errors: string[];
@@ -14,6 +16,6 @@ export interface IFormContactsData extends IFormBaseData {
 }
 
 export interface IFormOrderData extends IFormBaseData {
-  payment: 'card' | 'cash' | null;
+  payment: TPayment | null;
   address: string;
 }
