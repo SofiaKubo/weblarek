@@ -1,6 +1,7 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IOrderSuccessData, IOrderSuccessActions } from './types';
+import { IOrderSuccessData } from './types';
+import type { IEvents } from '../../base/Events';
 
 export class OrderSuccess extends Component<IOrderSuccessData> {
   private readonly descriptionElement: HTMLElement;
@@ -8,7 +9,7 @@ export class OrderSuccess extends Component<IOrderSuccessData> {
 
   constructor(
     container: HTMLElement,
-    private readonly actions: IOrderSuccessActions
+    private readonly events: IEvents
   ) {
     super(container);
 
@@ -22,7 +23,7 @@ export class OrderSuccess extends Component<IOrderSuccessData> {
     );
 
     this.closeButton.addEventListener('click', () => {
-      this.actions.onCloseRequest();
+      this.events.emit('order-success:close-clicked');
     });
   }
 
