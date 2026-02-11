@@ -184,10 +184,7 @@ export class Presenter {
 
   private handleBasketStateChanged = ({ items }: BasketStateChangedEvent) => {
     this.headerView.counter = items.length;
-
-    if (this.isBasketViewOpen) {
-      this.showBasket();
-    }
+    this.refreshBasketModalIfOpen();
   };
 
   private getBasketState = (): {
@@ -253,6 +250,14 @@ export class Presenter {
     const cardElements = this.buildBasketCardElements(basketItems);
 
     this.renderBasketModal(cardElements, total, isBasketEmpty);
+  };
+
+  private refreshBasketModalIfOpen = () => {
+    if (!this.isBasketViewOpen) {
+      return;
+    }
+
+    this.showBasket();
   };
 
   private handleBasketIconClick = () => {
