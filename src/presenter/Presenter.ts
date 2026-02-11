@@ -62,7 +62,10 @@ export class Presenter {
 
   init() {
     this.bindEvents();
-    this.headerView.render({ counter: this.basketModel.getItemsCount() });
+    this.handleBasketStateChanged({
+      items: this.basketModel.getItems(),
+      total: this.basketModel.getTotalPrice(),
+    });
     void this.loadInitialCatalog();
   }
 
