@@ -129,7 +129,7 @@ export class Presenter {
   };
 
   private handleBasketStateChanged = ({ items }: BasketStateChangedEvent) => {
-    this.headerView.counter = items.length;
+    this.updateHeaderCounter(items.length);
     this.refreshBasketModalIfOpen();
   };
 
@@ -274,6 +274,10 @@ export class Presenter {
 
   private renderCatalog = (cardElements: HTMLElement[]) => {
     this.galleryView.render({ catalog: cardElements });
+  };
+
+  private updateHeaderCounter = (count: number) => {
+    this.headerView.counter = count;
   };
 
   private toggleProductInBasket = (product: IProduct) => {
