@@ -74,7 +74,6 @@ export class Presenter {
       this.productsModel.setItems(products);
     } catch {
       this.productsModel.setItems([]);
-      // API failure — catalog stays empty, but app remains functional
     }
   }
 
