@@ -119,15 +119,8 @@ export class Presenter {
       return;
     }
 
-    const isInBasket = this.basketModel.hasItem(product.id);
-
-    if (isInBasket) {
-      this.basketModel.removeItem(product.id);
-    } else {
-      this.basketModel.addItem(product);
-    }
-
-    this.modalView.close();
+    this.toggleProductInBasket(product);
+    this.handleModalCloseTriggered();
   };
 
   private handleModalCloseTriggered = () => {
@@ -281,5 +274,15 @@ export class Presenter {
 
   private renderCatalog = (cardElements: HTMLElement[]) => {
     this.galleryView.render({ catalog: cardElements });
+  };
+
+  private toggleProductInBasket = (product: IProduct) => {
+    const isInBasket = this.basketModel.hasItem(product.id);
+
+    if (isInBasket) {
+      this.basketModel.removeItem(product.id);
+    } else {
+      this.basketModel.addItem(product);
+    }
   };
 }
