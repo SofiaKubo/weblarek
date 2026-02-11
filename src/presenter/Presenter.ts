@@ -127,38 +127,9 @@ export class Presenter {
     product,
   }: ProductSelectionChangedEvent) => {
     if (!product) return;
-    const isPriceless = product.price === null;
-    const isInBasket = this.basketModel.hasItem(product.id);
-
-    const cardView = new CardPreview(
-      cloneTemplate(this.templates.cardPreview),
-      {
-        onActionClick: () => {
-          this.handleProductActionClick({ product });
-        },
-      }
-    );
-
-    const content = cardView.render({
-      title: product.title,
-      description: product.description,
-      imageSrc: product.image
-        ? `${this.imageBaseUrl}/${product.image}`
-        : undefined,
-      imageAlt: product.title,
-      priceText: isPriceless ? 'Бесценно' : `${product.price} синапсов`,
-      category: product.category,
-      actionDisabled: isPriceless,
-      actionText: isPriceless
-        ? 'Недоступно'
-        : isInBasket
-          ? 'Удалить из корзины'
-          : 'Купить',
-    });
-
-    this.modalView.content = content;
-
-    this.modalView.open();
+    const previewState = this.getProductPreviewState(product);
+    const content = this.buildProductPreviewContent(product, previewState);
+    this.showModalContent(content);
   };
 
   private handleProductActionClick = ({ product }: { product: IProduct }) => {
@@ -262,5 +233,46 @@ export class Presenter {
 
   private handleBasketIconClick = () => {
     this.showBasket();
+  };
+
+  private getProductPreviewState = (product: IProduct) => {
+    const isPriceless = product.price === null;
+    const isInBasket = this.basketModel.hasItem(product.id);
+
+    return {
+      isPriceless,
+      isInBasket,
+    };
+  };
+
+  private buildProductPreviewContent = (
+    product: IProduct,
+    state: { isPriceless: boolean; isInBasket: boolean }
+  ): HTMLElement => {
+    const cardView = new CardPreview(cloneTemplate(this.templates.cardPreview), {
+      onActionClick: () => {
+        this.handleProductActionClick({ product });
+      },
+    });
+
+    return cardView.render({
+      title: product.title,
+      description: product.description,
+      imageSrc: product.image ? `${this.imageBaseUrl}/${product.image}` : undefined,
+      imageAlt: product.title,
+      priceText: state.isPriceless ? 'Бесценно' : `${product.price} синапсов`,
+      category: product.category,
+      actionDisabled: state.isPriceless,
+      actionText: state.isPriceless
+        ? 'Недоступно'
+        : state.isInBasket
+          ? 'Удалить из корзины'
+          : 'Купить',
+    });
+  };
+
+  private showModalContent = (content: HTMLElement) => {
+    this.modalView.content = content;
+    this.modalView.open();
   };
 }
