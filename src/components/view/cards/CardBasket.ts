@@ -17,7 +17,7 @@ export class CardBasket extends CardBase<IBasketCardData> {
       this.container
     );
 
-    this.removeButton.addEventListener('click', actions.onRemoveRequest);
+    this.removeButton.addEventListener('click', actions.onRemoveClick);
   }
 
   set index(value: number) {

@@ -53,9 +53,12 @@ export class Presenter {
   }
 
   private bindEvents() {
-    this.events.on('products:list-changed', this.onProductsChanged);
-    this.events.on('products:selection-changed', this.onProductSelectedChanged);
-    this.events.on('modal:close-triggered', this.onModalCloseRequest);
+    this.events.on('products:list-changed', this.handleProductsListChanged);
+    this.events.on(
+      'products:selection-changed',
+      this.handleProductSelectionChanged
+    );
+    this.events.on('modal:close-triggered', this.handleModalCloseTriggered);
   }
 
   private async loadInitialCatalog(): Promise<void> {
@@ -68,10 +71,10 @@ export class Presenter {
     }
   }
 
-  private onProductsChanged = ({ items }: { items: IProduct[] }) => {
+  private handleProductsListChanged = ({ items }: { items: IProduct[] }) => {
     const cardElements = items.map((item) => {
       const card = new CardCatalog(cloneTemplate(this.templates.cardCatalog), {
-        onSelectRequest: () => {
+        onCardClick: () => {
           this.productsModel.setSelectedItem(item);
         },
       });
@@ -88,7 +91,11 @@ export class Presenter {
     this.galleryView.render({ catalog: cardElements });
   };
 
-  private onProductSelectedChanged = ({ item }: { item: IProduct | null }) => {
+  private handleProductSelectionChanged = ({
+    item,
+  }: {
+    item: IProduct | null;
+  }) => {
     if (!item) return;
 
     const product = item;
@@ -98,8 +105,8 @@ export class Presenter {
     const cardView = new CardPreview(
       cloneTemplate(this.templates.cardPreview),
       {
-        onActionRequest: () => {
-          this.handleProductAction({ product });
+        onActionClick: () => {
+          this.handleProductActionClick({ product });
         },
       }
     );
@@ -126,7 +133,7 @@ export class Presenter {
     this.modalView.open();
   };
 
-  private handleProductAction = ({ product }: { product: IProduct }) => {
+  private handleProductActionClick = ({ product }: { product: IProduct }) => {
     if (product.price === null) {
       return;
     }
@@ -142,7 +149,7 @@ export class Presenter {
     this.modalView.close();
   };
 
-  private onModalCloseRequest = () => {
+  private handleModalCloseTriggered = () => {
     this.modalView.close();
   };
 }

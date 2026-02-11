@@ -39,7 +39,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
           form: this.formElement.name,
         });
       } else {
-        this.eventBusOrActions.onSubmitRequest();
+        this.eventBusOrActions.onSubmit();
       }
     });
 
@@ -56,7 +56,7 @@ export abstract class FormBase extends Component<IFormBaseData> {
           value: target.value,
         });
       } else {
-        this.eventBusOrActions.onFieldChange(target.name, target.value);
+        this.eventBusOrActions.onFieldInput(target.name, target.value);
       }
     });
   }

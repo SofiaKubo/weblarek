@@ -3,5 +3,5 @@ export interface IOrderSuccessData {
 }
 
 export interface IOrderSuccessActions {
-  onCloseRequest: () => void;
+  onCloseClick: () => void;
 }

@@ -16,16 +16,16 @@ export interface IBasketCardData extends ICardBaseData {
   index: number;
 }
 
-export interface ICatalogCardData extends ICardBaseData {}
+export type ICatalogCardData = ICardBaseData;
 
 export interface ICatalogCardActions {
-  onSelectRequest: () => void;
+  onCardClick: () => void;
 }
 
 export interface IPreviewCardActions {
-  onActionRequest: () => void;
+  onActionClick: () => void;
 }
 
 export interface IBasketCardActions {
-  onRemoveRequest: () => void;
+  onRemoveClick: () => void;
 }

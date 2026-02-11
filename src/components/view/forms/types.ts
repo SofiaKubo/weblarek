@@ -4,8 +4,8 @@ export interface IFormBaseData {
 }
 
 export interface IFormActions {
-  onSubmitRequest: () => void;
-  onFieldChange: (field: string, value: string) => void;
+  onSubmit: () => void;
+  onFieldInput: (field: string, value: string) => void;
 }
 
 export interface IFormContactsData extends IFormBaseData {

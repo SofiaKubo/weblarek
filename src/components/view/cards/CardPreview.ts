@@ -18,7 +18,7 @@ export class CardPreview extends CardBase<IPreviewCardData> {
     }
 
     this.actionButton.addEventListener('click', () => {
-      actions.onActionRequest();
+      actions.onActionClick();
     });
   }
 
