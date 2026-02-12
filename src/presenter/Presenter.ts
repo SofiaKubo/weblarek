@@ -3,11 +3,12 @@ import type { IEvents } from '../components/base/Events';
 import { BasketModel } from '../components/models/BasketModel';
 import type { BuyerModel } from '../components/models/BuyerModel';
 import type { ProductsModel } from '../components/models/ProductsModel';
-import { FormOrder } from '../components/view/forms/FormOrder';
 import { Basket } from '../components/view/basket/Basket';
 import { CardBasket } from '../components/view/cards/CardBasket';
 import { CardCatalog } from '../components/view/cards/CardCatalog';
 import { CardPreview } from '../components/view/cards/CardPreview';
+import { FormContacts } from '../components/view/forms/FormContacts';
+import { FormOrder } from '../components/view/forms/FormOrder';
 import type { Gallery } from '../components/view/gallery/Gallery';
 import type { Header } from '../components/view/header/Header';
 import type { Modal } from '../components/view/modal/Modal';
@@ -21,7 +22,6 @@ import type {
   FormSubmitTriggeredEvent,
 } from '../types/events';
 import { cloneTemplate } from '../utils/utils';
-import { FormContacts } from '../components/view/forms/FormContacts';
 
 type StepState<TFields> = {
   fields: TFields;
@@ -362,13 +362,9 @@ export class Presenter {
     };
   }
 
-  private handleBasketCheckoutClick = () => {
-    const isBasketEmpty = this.basketModel.getItemsCount() === 0;
-
-    if (isBasketEmpty) return;
-    this.isBasketViewOpen = false;
-    const orderStep = this.getOrderStepState();
-
+  private renderOrderStep = (
+    orderStep: StepState<{ payment: TPayment | null; address: string }>
+  ) => {
     const orderForm = new FormOrder(
       cloneTemplate(this.templates.order),
       this.events
@@ -382,6 +378,33 @@ export class Presenter {
     });
 
     this.showModalContent(content);
+  };
+
+  private renderContactsStep = (
+    contactsStep: StepState<{ email: string; phone: string }>
+  ) => {
+    const contactsForm = new FormContacts(
+      cloneTemplate(this.templates.contacts),
+      this.events
+    );
+    contactsForm.email = contactsStep.fields.email;
+    contactsForm.phone = contactsStep.fields.phone;
+
+    const content = contactsForm.render({
+      valid: contactsStep.valid,
+      errors: contactsStep.errors,
+    });
+
+    this.showModalContent(content);
+  };
+
+  private handleBasketCheckoutClick = () => {
+    const isBasketEmpty = this.basketModel.getItemsCount() === 0;
+
+    if (isBasketEmpty) return;
+    this.isBasketViewOpen = false;
+    const orderStep = this.getOrderStepState();
+    this.renderOrderStep(orderStep);
   };
 
   private handleFormFieldChanged = ({
@@ -412,36 +435,12 @@ export class Presenter {
       const orderStep = this.getOrderStepState();
 
       if (!orderStep.valid) {
-        const orderForm = new FormOrder(
-          cloneTemplate(this.templates.order),
-          this.events
-        );
-        orderForm.payment = orderStep.fields.payment;
-        orderForm.address = orderStep.fields.address;
-
-        const content = orderForm.render({
-          valid: orderStep.valid,
-          errors: orderStep.errors,
-        });
-
-        this.showModalContent(content);
+        this.renderOrderStep(orderStep);
         return;
       }
 
       const contactsStep = this.getContactsStepState();
-      const contactsForm = new FormContacts(
-        cloneTemplate(this.templates.contacts),
-        this.events
-      );
-      contactsForm.email = contactsStep.fields.email;
-      contactsForm.phone = contactsStep.fields.phone;
-
-      const content = contactsForm.render({
-        valid: contactsStep.valid,
-        errors: contactsStep.errors,
-      });
-
-      this.showModalContent(content);
+      this.renderContactsStep(contactsStep);
       return;
     }
 
@@ -449,19 +448,7 @@ export class Presenter {
       const contactsStep = this.getContactsStepState();
 
       if (!contactsStep.valid) {
-        const contactsForm = new FormContacts(
-          cloneTemplate(this.templates.contacts),
-          this.events
-        );
-        contactsForm.email = contactsStep.fields.email;
-        contactsForm.phone = contactsStep.fields.phone;
-
-        const content = contactsForm.render({
-          valid: contactsStep.valid,
-          errors: contactsStep.errors,
-        });
-
-        this.showModalContent(content);
+        this.renderContactsStep(contactsStep);
         return;
       }
     }
