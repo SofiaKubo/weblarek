@@ -176,8 +176,6 @@ export class Presenter {
     this.modalView.close();
     this.isBasketViewOpen = false;
     this.currentCheckoutStep = null;
-    this.orderFormView = null;
-    this.contactsFormView = null;
   };
 
   private handleBasketIconClick = () => {
@@ -314,7 +312,8 @@ export class Presenter {
   private collectErrors = (...messages: Array<string | undefined>): string[] =>
     messages.filter((message): message is string => message !== undefined);
 
-  private formatPrice = (value: number): string => value.toLocaleString('ru-RU');
+  private formatPrice = (value: number): string =>
+    value.toLocaleString('ru-RU');
 
   private formatProductPriceText = (value: number | null): string =>
     value === null ? 'Бесценно' : `${this.formatPrice(value)} синапсов`;
@@ -363,10 +362,12 @@ export class Presenter {
   private renderOrderStep = (
     orderStep: StepState<{ payment: TPayment | null; address: string }>
   ) => {
-    const orderForm = new FormOrder(
-      cloneTemplate<HTMLFormElement>(this.templates.order),
-      this.events
-    );
+    const orderForm =
+      this.orderFormView ??
+      new FormOrder(
+        cloneTemplate<HTMLFormElement>(this.templates.order),
+        this.events
+      );
     this.updateOrderFormView(orderForm, orderStep);
 
     const content = orderForm.render({
@@ -375,17 +376,18 @@ export class Presenter {
     });
 
     this.orderFormView = orderForm;
-    this.contactsFormView = null;
     this.showModalContent(content);
   };
 
   private renderContactsStep = (
     contactsStep: StepState<{ email: string; phone: string }>
   ) => {
-    const contactsForm = new FormContacts(
-      cloneTemplate<HTMLFormElement>(this.templates.contacts),
-      this.events
-    );
+    const contactsForm =
+      this.contactsFormView ??
+      new FormContacts(
+        cloneTemplate<HTMLFormElement>(this.templates.contacts),
+        this.events
+      );
     this.updateContactsFormView(contactsForm, contactsStep);
 
     const content = contactsForm.render({
@@ -394,7 +396,6 @@ export class Presenter {
     });
 
     this.contactsFormView = contactsForm;
-    this.orderFormView = null;
     this.showModalContent(content);
   };
 
@@ -407,8 +408,6 @@ export class Presenter {
     successView.total = total;
     this.showModalContent(successView.render());
     this.currentCheckoutStep = null;
-    this.orderFormView = null;
-    this.contactsFormView = null;
     this.basketModel.clear();
     this.buyerModel.clear();
   };
@@ -466,10 +465,12 @@ export class Presenter {
 
     this.isSubmittingOrder = true;
     try {
-      await this.webLarekApi.postOrder(orderData);
-      this.renderSuccessStep(total);
+      const orderResponse = await this.webLarekApi.postOrder(orderData);
+      this.renderSuccessStep(orderResponse.total);
     } catch {
-      this.showContactsStepError('Не удалось оформить заказ. Попробуйте ещё раз.');
+      this.showContactsStepError(
+        'Не удалось оформить заказ. Попробуйте ещё раз.'
+      );
     } finally {
       this.isSubmittingOrder = false;
     }

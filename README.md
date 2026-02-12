@@ -527,10 +527,23 @@ type FormFieldChangedEvent =
 `constructor(container: HTMLElement)` — принимает корневой элемент карточки.
 
 Поля класса:
-`titleElement`, `priceTextElement`, `categoryElement`, `imageElement`, `actionButton`.
+`titleElement`, `priceTextElement`.
 
 Методы:
-сеттеры для управления отображением: `title`, `priceText`, `category`, `imageSrc`, `imageAlt`, `actionDisabled`, `actionText`.
+сеттеры для управления отображением: `title`, `priceText`.
+
+### Базовая визуальная карточка (CardVisualBase)
+
+Абстрактный промежуточный класс для визуальных карточек каталога и превью.
+
+Конструктор:
+`constructor(container: HTMLElement)` — принимает корневой элемент карточки.
+
+Поля класса:
+`categoryElement`, `imageElement`.
+
+Методы:
+сеттеры для управления визуальной частью: `category`, `imageSrc`, `imageAlt`.
 
 ### Карточка каталога (CardCatalog)
 
@@ -539,6 +552,9 @@ type FormFieldChangedEvent =
 Конструктор:
 `constructor(container: HTMLElement, actions: ICatalogCardActions)` — принимает контейнер и обработчик клика по карточке.
 
+Наследование:
+`CardCatalog` наследуется от `CardVisualBase`.
+
 ### Карточка превью (CardPreview)
 
 Отвечает за отображение карточки товара в модальном окне просмотра.
@@ -546,11 +562,17 @@ type FormFieldChangedEvent =
 Конструктор:
 `constructor(container: HTMLElement, actions: IPreviewCardActions)` — принимает контейнер и обработчик кнопки действия.
 
+Наследование:
+`CardPreview` наследуется от `CardVisualBase`.
+
 Поля класса:
-`descriptionElement: HTMLElement` — элемент описания товара.
+`descriptionElement: HTMLElement` — элемент описания товара;
+`actionButton: HTMLButtonElement` — кнопка действия (купить/удалить).
 
 Методы:
-`set description(value: string)` — устанавливает описание товара.
+`set description(value: string)` — устанавливает описание товара;
+`set actionDisabled(value: boolean)` — управляет доступностью кнопки действия;
+`set actionText(value: string)` — устанавливает текст кнопки действия.
 
 ### Карточка корзины (CardBasket)
 
@@ -558,6 +580,9 @@ type FormFieldChangedEvent =
 
 Конструктор:
 `constructor(container: HTMLElement, actions: IBasketCardActions)` — принимает контейнер и обработчик удаления товара.
+
+Наследование:
+`CardBasket` наследуется напрямую от `CardBase`.
 
 Поля класса:
 `indexElement: HTMLElement` — номер позиции;
@@ -696,6 +721,8 @@ type FormFieldChangedEvent =
 `handleFormSubmitTriggered` — переход между шагами оформления и запуск отправки заказа;
 `handleBuyerDataChanged` — реактивное обновление состояния открытой формы;
 `handleOrderSuccessCloseClicked` и `handleModalCloseTriggered` — закрытие модального окна и сброс UI-состояния.
+
+При успешной отправке заказа итоговая сумма для окна успеха берётся из ответа сервера (`OrderResponse.total`).
 
 ### Роль в MVP
 
