@@ -9,6 +9,7 @@ import { CardCatalog } from '../components/view/cards/CardCatalog';
 import { CardPreview } from '../components/view/cards/CardPreview';
 import { FormContacts } from '../components/view/forms/FormContacts';
 import { FormOrder } from '../components/view/forms/FormOrder';
+import { OrderSuccess } from '../components/view/order-success/OrderSuccess';
 import type { Gallery } from '../components/view/gallery/Gallery';
 import type { Header } from '../components/view/header/Header';
 import type { Modal } from '../components/view/modal/Modal';
@@ -62,6 +63,8 @@ export class Presenter {
   private headerView: Header;
   private isBasketViewOpen = false;
   private currentCheckoutStep: 'order' | 'contacts' | null = null;
+  private orderFormView: FormOrder | null = null;
+  private contactsFormView: FormContacts | null = null;
   private templates: {
     cardCatalog: HTMLTemplateElement;
     cardPreview: HTMLTemplateElement;
@@ -171,6 +174,8 @@ export class Presenter {
     this.modalView.close();
     this.isBasketViewOpen = false;
     this.currentCheckoutStep = null;
+    this.orderFormView = null;
+    this.contactsFormView = null;
   };
 
   private handleBasketIconClick = () => {
@@ -379,6 +384,8 @@ export class Presenter {
       errors: orderStep.errors,
     });
 
+    this.orderFormView = orderForm;
+    this.contactsFormView = null;
     this.showModalContent(content);
   };
 
@@ -397,7 +404,54 @@ export class Presenter {
       errors: contactsStep.errors,
     });
 
+    this.contactsFormView = contactsForm;
+    this.orderFormView = null;
     this.showModalContent(content);
+  };
+
+  private renderSuccessStep(total: number) {
+    const successView = new OrderSuccess(
+      cloneTemplate(this.templates.success),
+      this.events
+    );
+
+    successView.total = total;
+    this.showModalContent(successView.render());
+    this.currentCheckoutStep = null;
+    this.basketModel.clear();
+    this.buyerModel.clear();
+  }
+
+  private submitOrder = async (): Promise<void> => {
+    const buyer = this.buyerModel.getData();
+    const items = this.basketModel.getItems();
+    const total = this.basketModel.getTotalPrice();
+
+    if (buyer.payment === null) return;
+
+    const orderData = {
+      payment: buyer.payment,
+      email: buyer.email,
+      phone: buyer.phone,
+      address: buyer.address,
+      items: items.map((item) => item.id),
+      total,
+    };
+
+    try {
+      await this.webLarekApi.postOrder(orderData);
+      this.renderSuccessStep(total);
+    } catch {
+      const contactsStep = this.getContactsStepState();
+      this.renderContactsStep({
+        ...contactsStep,
+        valid: false,
+        errors: [
+          ...contactsStep.errors,
+          'Не удалось оформить заказ. Попробуйте ещё раз.',
+        ],
+      });
+    }
   };
 
   private handleBasketCheckoutClick = () => {
@@ -457,21 +511,30 @@ export class Presenter {
         this.currentCheckoutStep = 'contacts';
         return;
       }
+
+      void this.submitOrder();
     }
   };
 
   private handleBuyerDataChanged = () => {
     if (this.currentCheckoutStep === 'order') {
+      if (!this.orderFormView) return;
       const orderStep = this.getOrderStepState();
-      this.renderOrderStep(orderStep);
+      this.orderFormView.payment = orderStep.fields.payment;
+      this.orderFormView.valid = orderStep.valid;
+      this.orderFormView.errors = orderStep.errors;
       return;
     }
 
     if (this.currentCheckoutStep === 'contacts') {
+      if (!this.contactsFormView) return;
       const contactsStep = this.getContactsStepState();
-      this.renderContactsStep(contactsStep);
+      this.contactsFormView.valid = contactsStep.valid;
+      this.contactsFormView.errors = contactsStep.errors;
     }
   };
 
-  private handleOrderSuccessCloseClicked = () => {};
+  private handleOrderSuccessCloseClicked = () => {
+    this.handleModalCloseTriggered();
+  };
 }
