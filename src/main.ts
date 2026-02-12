@@ -1,16 +1,52 @@
-import { EventEmitter } from './components/base/Events';
-import { WebLarekApi } from './api/WebLarekApi';
 import { Api } from './components/base/Api';
-import { API_URL, CDN_URL } from './utils/constants';
-import { ProductsModel } from './components/models/ProductsModel';
+import { EventEmitter } from './components/base/Events';
 import { BasketModel } from './components/models/BasketModel';
 import { BuyerModel } from './components/models/BuyerModel';
+import { ProductsModel } from './components/models/ProductsModel';
 import { Gallery } from './components/view/gallery/Gallery';
-import { Modal } from './components/view/modal/Modal';
 import { Header } from './components/view/header/Header';
+import { Modal } from './components/view/modal/Modal';
+import { WebLarekApi } from './api/WebLarekApi';
 import { Presenter } from './presenter/Presenter';
-import './scss/styles.scss';
+import { API_URL, CDN_URL } from './utils/constants';
 import { ensureElement } from './utils/utils';
+import './scss/styles.scss';
+
+type AppContainers = {
+  gallery: HTMLElement;
+  header: HTMLElement;
+  modal: HTMLElement;
+};
+
+type AppTemplates = {
+  basket: HTMLTemplateElement;
+  cardBasket: HTMLTemplateElement;
+  cardCatalog: HTMLTemplateElement;
+  cardPreview: HTMLTemplateElement;
+  contacts: HTMLTemplateElement;
+  order: HTMLTemplateElement;
+  success: HTMLTemplateElement;
+};
+
+function queryAppContainers(): AppContainers {
+  return {
+    gallery: ensureElement<HTMLElement>('.gallery'),
+    header: ensureElement<HTMLElement>('.header'),
+    modal: ensureElement<HTMLElement>('#modal-container'),
+  };
+}
+
+function queryAppTemplates(): AppTemplates {
+  return {
+    basket: ensureElement<HTMLTemplateElement>('#basket'),
+    cardBasket: ensureElement<HTMLTemplateElement>('#card-basket'),
+    cardCatalog: ensureElement<HTMLTemplateElement>('#card-catalog'),
+    cardPreview: ensureElement<HTMLTemplateElement>('#card-preview'),
+    contacts: ensureElement<HTMLTemplateElement>('#contacts'),
+    order: ensureElement<HTMLTemplateElement>('#order'),
+    success: ensureElement<HTMLTemplateElement>('#success'),
+  };
+}
 
 function bootstrapApp(): Presenter {
   // 1. Infrastructure
@@ -24,24 +60,14 @@ function bootstrapApp(): Presenter {
   const basketModel = new BasketModel(events);
   const buyerModel = new BuyerModel(events);
 
-  // 3. DOM containers (queried once at startup)
-  const galleryContainer = ensureElement<HTMLElement>('.gallery');
-  const modalContainer = ensureElement<HTMLElement>('#modal-container');
-  const headerContainer = ensureElement<HTMLElement>('.header');
-
-  // 4. Templates
-  const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
-  const previewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
-  const basketViewTemplate = ensureElement<HTMLTemplateElement>('#basket');
-  const basketCardTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
-  const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
-  const contactsTemplate = ensureElement<HTMLTemplateElement>('#contacts');
-  const successTemplate = ensureElement<HTMLTemplateElement>('#success');
+  // 3. DOM containers and templates (queried once at startup)
+  const containers = queryAppContainers();
+  const templates = queryAppTemplates();
 
   // 5. Views (long-lived container components)
-  const galleryView = new Gallery(galleryContainer);
-  const modalView = new Modal(modalContainer, events);
-  const headerView = new Header(headerContainer, events);
+  const galleryView = new Gallery(containers.gallery);
+  const modalView = new Modal(containers.modal, events);
+  const headerView = new Header(containers.header, events);
 
   // 6. Presenter
   return new Presenter({
@@ -54,15 +80,7 @@ function bootstrapApp(): Presenter {
     galleryView,
     modalView,
     headerView,
-    templates: {
-      cardCatalog: catalogTemplate,
-      cardPreview: previewTemplate,
-      basket: basketViewTemplate,
-      cardBasket: basketCardTemplate,
-      order: orderTemplate,
-      contacts: contactsTemplate,
-      success: successTemplate,
-    },
+    templates,
   });
 }
 

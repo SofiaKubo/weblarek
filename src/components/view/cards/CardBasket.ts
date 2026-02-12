@@ -1,6 +1,6 @@
 import { CardBase } from './CardBase';
 import { ensureElement } from '../../../utils/utils';
-import { IBasketCardActions, IBasketCardData } from './types';
+import type { IBasketCardActions, IBasketCardData } from './types';
 
 export class CardBasket extends CardBase<IBasketCardData> {
   private readonly indexElement: HTMLElement;

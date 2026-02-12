@@ -1,5 +1,5 @@
 import { Component } from '../../base/Component';
-import { IGalleryData } from './types';
+import type { IGalleryData } from './types';
 
 export class Gallery extends Component<IGalleryData> {
   constructor(container: HTMLElement) {

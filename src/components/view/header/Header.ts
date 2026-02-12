@@ -1,7 +1,7 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IHeaderData } from './types';
 import type { IEvents } from '../../base/Events';
+import type { IHeaderData } from './types';
 
 export class Header extends Component<IHeaderData> {
   private readonly counterElement: HTMLElement;

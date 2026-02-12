@@ -1,7 +1,7 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
 import type { IEvents } from '../../base/Events';
-import { IModalData } from './types';
+import type { IModalData } from './types';
 
 export class Modal extends Component<IModalData> {
   private readonly closeButton: HTMLButtonElement;
@@ -10,7 +10,7 @@ export class Modal extends Component<IModalData> {
 
   constructor(
     container: HTMLElement,
-    private events: IEvents
+    private readonly events: IEvents
   ) {
     super(container);
 

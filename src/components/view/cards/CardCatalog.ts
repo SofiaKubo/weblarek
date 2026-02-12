@@ -1,5 +1,5 @@
 import { CardBase } from './CardBase';
-import { ICatalogCardActions, ICatalogCardData } from './types';
+import type { ICatalogCardActions, ICatalogCardData } from './types';
 
 export class CardCatalog extends CardBase<ICatalogCardData> {
   constructor(container: HTMLElement, actions: ICatalogCardActions) {

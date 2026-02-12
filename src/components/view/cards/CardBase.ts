@@ -1,7 +1,7 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { ICardBaseData } from './types';
 import { categoryMap } from '../../../utils/constants';
+import type { ICardBaseData } from './types';
 
 export abstract class CardBase<T extends ICardBaseData> extends Component<T> {
   protected readonly titleElement: HTMLElement;
@@ -46,9 +46,9 @@ export abstract class CardBase<T extends ICardBaseData> extends Component<T> {
 
     this.categoryElement.textContent = value ?? '';
 
-    for (const key in categoryMap) {
+    for (const [key, className] of Object.entries(categoryMap)) {
       this.categoryElement.classList.toggle(
-        categoryMap[key as keyof typeof categoryMap],
+        className,
         key === value
       );
     }

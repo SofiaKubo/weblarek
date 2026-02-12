@@ -1,7 +1,7 @@
 import { Component } from '../../base/Component';
 import { ensureElement } from '../../../utils/utils';
-import { IOrderSuccessData } from './types';
 import type { IEvents } from '../../base/Events';
+import type { IOrderSuccessData } from './types';
 
 export class OrderSuccess extends Component<IOrderSuccessData> {
   private readonly descriptionElement: HTMLElement;
