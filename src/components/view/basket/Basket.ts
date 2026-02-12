@@ -40,6 +40,6 @@ export class Basket extends Component<IBasketData> {
   }
 
   set total(value: number) {
-    this.totalElement.textContent = `${value} синапсов`;
+    this.totalElement.textContent = `${value.toLocaleString('ru-RU')} синапсов`;
   }
 }

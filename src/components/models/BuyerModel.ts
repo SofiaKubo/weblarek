@@ -63,7 +63,7 @@ export class BuyerModel {
       errors.phone = 'Укажите телефон';
     }
     if (!this.address) {
-      errors.address = 'Укажите адрес доставки';
+      errors.address = 'Необходимо указать адрес';
     }
     return errors;
   }

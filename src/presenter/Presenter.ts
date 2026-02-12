@@ -199,8 +199,7 @@ export class Presenter {
 
       return card.render({
         title: product.title,
-        priceText:
-          product.price === null ? 'Бесценно' : `${product.price} синапсов`,
+        priceText: this.formatProductPriceText(product.price),
         category: product.category,
         imageSrc: product.image
           ? `${this.imageBaseUrl}/${product.image}`
@@ -240,7 +239,7 @@ export class Presenter {
         ? `${this.imageBaseUrl}/${product.image}`
         : undefined,
       imageAlt: product.title,
-      priceText: state.isPriceless ? 'Бесценно' : `${product.price} синапсов`,
+      priceText: this.formatProductPriceText(product.price),
       category: product.category,
       actionDisabled: state.isPriceless,
       actionText: state.isPriceless
@@ -270,7 +269,7 @@ export class Presenter {
       return basketCardView.render({
         index: index + 1,
         title: item.title,
-        priceText: `${item.price} синапсов`,
+        priceText: this.formatProductPriceText(item.price),
       });
     });
   };
@@ -314,6 +313,11 @@ export class Presenter {
 
   private collectErrors = (...messages: Array<string | undefined>): string[] =>
     messages.filter((message): message is string => message !== undefined);
+
+  private formatPrice = (value: number): string => value.toLocaleString('ru-RU');
+
+  private formatProductPriceText = (value: number | null): string =>
+    value === null ? 'Бесценно' : `${this.formatPrice(value)} синапсов`;
 
   private getOrderStepState(): StepState<{
     payment: TPayment | null;

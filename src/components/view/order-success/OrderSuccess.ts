@@ -28,6 +28,6 @@ export class OrderSuccess extends Component<IOrderSuccessData> {
   }
 
   set total(value: number) {
-    this.descriptionElement.textContent = `Списано ${value} синапсов`;
+    this.descriptionElement.textContent = `Списано ${value.toLocaleString('ru-RU')} синапсов`;
   }
 }

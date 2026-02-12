@@ -14,7 +14,7 @@ export class CardPreview extends CardBase<IPreviewCardData> {
     );
 
     if (!this.actionButton) {
-      throw new Error('Action button is required for CardPreview');
+      throw new Error('Для CardPreview требуется кнопка действия');
     }
 
     this.actionButton.addEventListener('click', () => {

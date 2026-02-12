@@ -49,27 +49,27 @@ function queryAppTemplates(): AppTemplates {
 }
 
 function bootstrapApp(): Presenter {
-  // 1. Infrastructure
+  // 1. Инфраструктура
   const events = new EventEmitter();
   const api = new Api(API_URL);
   const webLarekApi = new WebLarekApi(api);
   const imageBaseUrl = CDN_URL;
 
-  // 2. Models
+  // 2. Модели
   const productsModel = new ProductsModel(events);
   const basketModel = new BasketModel(events);
   const buyerModel = new BuyerModel(events);
 
-  // 3. DOM containers and templates (queried once at startup)
+  // 3. DOM-контейнеры и шаблоны (запрашиваются один раз при старте)
   const containers = queryAppContainers();
   const templates = queryAppTemplates();
 
-  // 5. Views (long-lived container components)
+  // 5. Представления (долгоживущие контейнерные компоненты)
   const galleryView = new Gallery(containers.gallery);
   const modalView = new Modal(containers.modal, events);
   const headerView = new Header(containers.header, events);
 
-  // 6. Presenter
+  // 6. Презентер
   return new Presenter({
     events,
     webLarekApi,
@@ -86,11 +86,11 @@ function bootstrapApp(): Presenter {
 
 function initApp(): void {
   try {
-    // 7. Launch
+    // 7. Запуск
     const presenter = bootstrapApp();
     presenter.init();
   } catch (error) {
-    console.error('App bootstrap failed', error);
+    console.error('Ошибка инициализации приложения', error);
   }
 }
 

@@ -256,6 +256,69 @@ export type OrderResponse = {
 
 ---
 
+### Типы событий приложения
+
+Типы событий, используемые `EventEmitter`, объявлены в `src/types/index.ts`.
+
+#### ProductsListChangedEvent
+
+```ts
+interface ProductsListChangedEvent {
+  products: IProduct[];
+}
+```
+
+#### ProductSelectionChangedEvent
+
+```ts
+interface ProductSelectionChangedEvent {
+  product: IProduct | null;
+}
+```
+
+#### BasketStateChangedEvent
+
+```ts
+interface BasketStateChangedEvent {
+  items: IProduct[];
+  total: number;
+}
+```
+
+#### BuyerDataChangedEvent
+
+```ts
+interface BuyerDataChangedEvent {
+  buyer: IBuyer;
+}
+```
+
+#### FormSubmitTriggeredEvent
+
+```ts
+interface FormSubmitTriggeredEvent {
+  form: 'order' | 'contacts';
+}
+```
+
+#### FormFieldChangedEvent
+
+```ts
+type OrderFieldChangedEvent =
+  | { field: 'payment'; value: TPayment }
+  | { field: 'address'; value: string };
+
+type ContactsFieldChangedEvent =
+  | { field: 'email'; value: string }
+  | { field: 'phone'; value: string };
+
+type FormFieldChangedEvent =
+  | ({ form: 'order' } & OrderFieldChangedEvent)
+  | ({ form: 'contacts' } & ContactsFieldChangedEvent);
+```
+
+---
+
 ## Модели данных
 
 ### Каталог товаров (ProductsModel)
@@ -353,6 +416,12 @@ export type OrderResponse = {
 
 Если поле прошло проверку, соответствующее свойство отсутствует в возвращаемом объекте.
 Пустой объект означает, что все данные валидны и оформление заказа может быть продолжено.
+
+Текущие сообщения валидации:
+`payment` — `Выберите способ оплаты`;
+`email` — `Укажите email`;
+`phone` — `Укажите телефон`;
+`address` — `Необходимо указать адрес`.
 
 ## Слой коммуникации
 
@@ -512,7 +581,7 @@ export type OrderResponse = {
 Методы:
 `set items(cards: HTMLElement[])` — устанавливает элементы списка корзины;
 `set submitDisabled(value: boolean)` — управляет доступностью кнопки оформления;
-`set total(value: number)` — устанавливает итоговую стоимость.
+`set total(value: number)` — устанавливает итоговую стоимость в формате `ru-RU` (с разделением разрядов) и выводит значение с подписью `синапсов`.
 
 ### Базовая форма (FormBase)
 
@@ -569,7 +638,7 @@ export type OrderResponse = {
 `closeButton: HTMLButtonElement` — кнопка закрытия окна.
 
 Методы:
-`set total(value: number)` — устанавливает сумму списания.
+`set total(value: number)` — устанавливает сумму списания в формате `ru-RU` (с разделением разрядов).
 
 ## События приложения
 
