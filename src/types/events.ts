@@ -18,7 +18,7 @@ export interface BuyerDataChangedEvent {
 }
 
 export interface FormSubmitTriggeredEvent {
-  form: string;
+  form: 'order' | 'contacts';
 }
 
 type OrderFieldChangedEvent =

@@ -12,14 +12,22 @@ import type { Gallery } from '../components/view/gallery/Gallery';
 import type { Header } from '../components/view/header/Header';
 import type { Modal } from '../components/view/modal/Modal';
 
-import { IProduct } from '../types';
+import { IProduct, TPayment } from '../types';
 import type {
   BasketStateChangedEvent,
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
   FormFieldChangedEvent,
+  FormSubmitTriggeredEvent,
 } from '../types/events';
 import { cloneTemplate } from '../utils/utils';
+import { FormContacts } from '../components/view/forms/FormContacts';
+
+type StepState<TFields> = {
+  fields: TFields;
+  errors: string[];
+  valid: boolean;
+};
 
 type PresenterDependencies = {
   events: IEvents;
@@ -105,7 +113,10 @@ export class Presenter {
       'form:field-changed',
       this.handleFormFieldChanged
     );
-    this.events.on('form:submit-triggered', this.handleFormSubmitTriggered);
+    this.events.on<FormSubmitTriggeredEvent>(
+      'form:submit-triggered',
+      this.handleFormSubmitTriggered
+    );
     this.events.on('buyer:data-changed', this.handleBuyerDataChanged);
     this.events.on(
       'order-success:close-clicked',
@@ -306,38 +317,68 @@ export class Presenter {
     this.showBasket();
   };
 
+  private getOrderStepState(): StepState<{
+    payment: TPayment | null;
+    address: string;
+  }> {
+    const { payment, address } = this.buyerModel.getData();
+    const allErrors = this.buyerModel.validate();
+
+    const errors = [allErrors.payment, allErrors.address].filter(
+      (message): message is string => message !== undefined
+    );
+
+    const valid =
+      errors.length === 0 && payment !== null && address.trim().length > 0;
+
+    return {
+      fields: {
+        payment,
+        address,
+      },
+      errors,
+      valid,
+    };
+  }
+
+  private getContactsStepState(): StepState<{ email: string; phone: string }> {
+    const { email, phone } = this.buyerModel.getData();
+    const allErrors = this.buyerModel.validate();
+
+    const errors = [allErrors.email, allErrors.phone].filter(
+      (message): message is string => message !== undefined
+    );
+
+    const valid =
+      errors.length === 0 && email.trim().length > 0 && phone.trim().length > 0;
+
+    return {
+      fields: {
+        email,
+        phone,
+      },
+      errors,
+      valid,
+    };
+  }
+
   private handleBasketCheckoutClick = () => {
     const isBasketEmpty = this.basketModel.getItemsCount() === 0;
 
     if (isBasketEmpty) return;
     this.isBasketViewOpen = false;
-    const { payment, address } = this.buyerModel.getData();
-    const allErrors = this.buyerModel.validate();
-
-    const orderStepErrors = {
-      payment: allErrors.payment,
-      address: allErrors.address,
-    };
-
-    const orderStepErrorMessages = Object.values(orderStepErrors).filter(
-      (message): message is string => message !== undefined
-    );
-
-    const isOrderStepValid =
-      orderStepErrorMessages.length === 0 &&
-      payment !== null &&
-      address.trim().length > 0;
+    const orderStep = this.getOrderStepState();
 
     const orderForm = new FormOrder(
       cloneTemplate(this.templates.order),
       this.events
     );
-    orderForm.payment = payment;
-    orderForm.address = address;
+    orderForm.payment = orderStep.fields.payment;
+    orderForm.address = orderStep.fields.address;
 
     const content = orderForm.render({
-      valid: isOrderStepValid,
-      errors: orderStepErrorMessages,
+      valid: orderStep.valid,
+      errors: orderStep.errors,
     });
 
     this.showModalContent(content);
@@ -366,14 +407,67 @@ export class Presenter {
     }
   };
 
-  private handleFormSubmitTriggered = () => {};
+  private handleFormSubmitTriggered = ({ form }: FormSubmitTriggeredEvent) => {
+    if (form === 'order') {
+      const orderStep = this.getOrderStepState();
+
+      if (!orderStep.valid) {
+        const orderForm = new FormOrder(
+          cloneTemplate(this.templates.order),
+          this.events
+        );
+        orderForm.payment = orderStep.fields.payment;
+        orderForm.address = orderStep.fields.address;
+
+        const content = orderForm.render({
+          valid: orderStep.valid,
+          errors: orderStep.errors,
+        });
+
+        this.showModalContent(content);
+        return;
+      }
+
+      const contactsStep = this.getContactsStepState();
+      const contactsForm = new FormContacts(
+        cloneTemplate(this.templates.contacts),
+        this.events
+      );
+      contactsForm.email = contactsStep.fields.email;
+      contactsForm.phone = contactsStep.fields.phone;
+
+      const content = contactsForm.render({
+        valid: contactsStep.valid,
+        errors: contactsStep.errors,
+      });
+
+      this.showModalContent(content);
+      return;
+    }
+
+    if (form === 'contacts') {
+      const contactsStep = this.getContactsStepState();
+
+      if (!contactsStep.valid) {
+        const contactsForm = new FormContacts(
+          cloneTemplate(this.templates.contacts),
+          this.events
+        );
+        contactsForm.email = contactsStep.fields.email;
+        contactsForm.phone = contactsStep.fields.phone;
+
+        const content = contactsForm.render({
+          valid: contactsStep.valid,
+          errors: contactsStep.errors,
+        });
+
+        this.showModalContent(content);
+        return;
+      }
+    }
+  };
 
   private handleBuyerDataChanged = () => {};
 
-
   private handleOrderSuccessCloseClicked = () => {};
-
 }
-
-
-
