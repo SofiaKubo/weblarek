@@ -22,7 +22,7 @@ import type {
   ProductsListChangedEvent,
   FormFieldChangedEvent,
   FormSubmitTriggeredEvent,
-} from '../types/events';
+} from '../types';
 import { cloneTemplate } from '../utils/utils';
 
 type StepState<TFields> = {

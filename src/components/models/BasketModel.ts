@@ -1,6 +1,6 @@
 import { IProduct } from '../../types/index';
 import { IEvents } from '../../components/base/Events';
-import type { BasketStateChangedEvent } from '../../types/events';
+import type { BasketStateChangedEvent } from '../../types/index';
 export class BasketModel {
   private items: IProduct[];
 

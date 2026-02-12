@@ -1,7 +1,7 @@
 import { TPayment } from '../../types/index';
 import { IBuyer } from '../../types/index';
 import { IEvents } from '../../components/base/Events';
-import type { BuyerDataChangedEvent } from '../../types/events';
+import type { BuyerDataChangedEvent } from '../../types/index';
 export class BuyerModel {
   private payment: TPayment | null;
   private email: string;

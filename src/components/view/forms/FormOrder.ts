@@ -1,7 +1,7 @@
 import { FormBase } from './FormBase';
 import { ensureElement } from '../../../utils/utils';
 import type { IEvents } from '../../base/Events';
-import type { FormFieldChangedEvent } from '../../../types/events';
+import type { FormFieldChangedEvent } from '../../../types/index';
 
 export class FormOrder extends FormBase {
   private readonly cardButton: HTMLButtonElement;

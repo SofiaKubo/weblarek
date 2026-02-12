@@ -3,7 +3,7 @@ import { IEvents } from '../../components/base/Events';
 import type {
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
-} from '../../types/events';
+} from '../../types/index';
 
 export class ProductsModel {
   private items: IProduct[];
