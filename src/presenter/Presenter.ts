@@ -360,11 +360,10 @@ export class Presenter {
     orderStep: StepState<{ payment: TPayment | null; address: string }>
   ) => {
     const orderForm = new FormOrder(
-      cloneTemplate(this.templates.order),
+      cloneTemplate<HTMLFormElement>(this.templates.order),
       this.events
     );
-    orderForm.payment = orderStep.fields.payment;
-    orderForm.address = orderStep.fields.address;
+    this.updateOrderFormView(orderForm, orderStep);
 
     const content = orderForm.render({
       valid: orderStep.valid,
@@ -380,11 +379,10 @@ export class Presenter {
     contactsStep: StepState<{ email: string; phone: string }>
   ) => {
     const contactsForm = new FormContacts(
-      cloneTemplate(this.templates.contacts),
+      cloneTemplate<HTMLFormElement>(this.templates.contacts),
       this.events
     );
-    contactsForm.email = contactsStep.fields.email;
-    contactsForm.phone = contactsStep.fields.phone;
+    this.updateContactsFormView(contactsForm, contactsStep);
 
     const content = contactsForm.render({
       valid: contactsStep.valid,
@@ -411,6 +409,36 @@ export class Presenter {
     this.buyerModel.clear();
   };
 
+  private updateOrderFormView = (
+    orderForm: FormOrder,
+    orderStep: StepState<{ payment: TPayment | null; address: string }>
+  ) => {
+    orderForm.payment = orderStep.fields.payment;
+    orderForm.address = orderStep.fields.address;
+    orderForm.valid = orderStep.valid;
+    orderForm.errors = orderStep.errors;
+  };
+
+  private updateContactsFormView = (
+    contactsForm: FormContacts,
+    contactsStep: StepState<{ email: string; phone: string }>
+  ) => {
+    contactsForm.email = contactsStep.fields.email;
+    contactsForm.phone = contactsStep.fields.phone;
+    contactsForm.valid = contactsStep.valid;
+    contactsForm.errors = contactsStep.errors;
+  };
+
+  private showContactsStepError = (message: string) => {
+    const contactsStep = this.getContactsStepState();
+    this.renderContactsStep({
+      ...contactsStep,
+      valid: false,
+      errors: [...contactsStep.errors, message],
+    });
+    this.currentCheckoutStep = 'contacts';
+  };
+
   private submitOrder = async (): Promise<void> => {
     if (this.isSubmittingOrder) return;
 
@@ -419,13 +447,7 @@ export class Presenter {
     const total = this.basketModel.getTotalPrice();
 
     if (buyer.payment === null) {
-      const contactsStep = this.getContactsStepState();
-      this.renderContactsStep({
-        ...contactsStep,
-        valid: false,
-        errors: [...contactsStep.errors, 'Выберите способ оплаты'],
-      });
-      this.currentCheckoutStep = 'contacts';
+      this.showContactsStepError('Выберите способ оплаты');
       return;
     }
 
@@ -443,16 +465,7 @@ export class Presenter {
       await this.webLarekApi.postOrder(orderData);
       this.renderSuccessStep(total);
     } catch {
-      const contactsStep = this.getContactsStepState();
-      this.renderContactsStep({
-        ...contactsStep,
-        valid: false,
-        errors: [
-          ...contactsStep.errors,
-          'Не удалось оформить заказ. Попробуйте ещё раз.',
-        ],
-      });
-      this.currentCheckoutStep = 'contacts';
+      this.showContactsStepError('Не удалось оформить заказ. Попробуйте ещё раз.');
     } finally {
       this.isSubmittingOrder = false;
     }
@@ -495,7 +508,11 @@ export class Presenter {
     const orderStep = this.getOrderStepState();
 
     if (!orderStep.valid) {
-      this.renderOrderStep(orderStep);
+      if (this.orderFormView) {
+        this.updateOrderFormView(this.orderFormView, orderStep);
+      } else {
+        this.renderOrderStep(orderStep);
+      }
       this.currentCheckoutStep = 'order';
       return;
     }
@@ -509,7 +526,11 @@ export class Presenter {
     const contactsStep = this.getContactsStepState();
 
     if (!contactsStep.valid) {
-      this.renderContactsStep(contactsStep);
+      if (this.contactsFormView) {
+        this.updateContactsFormView(this.contactsFormView, contactsStep);
+      } else {
+        this.renderContactsStep(contactsStep);
+      }
       this.currentCheckoutStep = 'contacts';
       return;
     }
@@ -532,17 +553,14 @@ export class Presenter {
     if (this.currentCheckoutStep === 'order') {
       if (!this.orderFormView) return;
       const orderStep = this.getOrderStepState();
-      this.orderFormView.payment = orderStep.fields.payment;
-      this.orderFormView.valid = orderStep.valid;
-      this.orderFormView.errors = orderStep.errors;
+      this.updateOrderFormView(this.orderFormView, orderStep);
       return;
     }
 
     if (this.currentCheckoutStep === 'contacts') {
       if (!this.contactsFormView) return;
       const contactsStep = this.getContactsStepState();
-      this.contactsFormView.valid = contactsStep.valid;
-      this.contactsFormView.errors = contactsStep.errors;
+      this.updateContactsFormView(this.contactsFormView, contactsStep);
     }
   };
 
