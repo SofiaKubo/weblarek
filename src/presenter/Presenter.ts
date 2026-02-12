@@ -15,6 +15,7 @@ import type { Header } from '../components/view/header/Header';
 import type { Modal } from '../components/view/modal/Modal';
 
 import { IProduct, TPayment } from '../types';
+import type { OrderRequest } from '../types';
 import type {
   BasketStateChangedEvent,
   ProductSelectionChangedEvent,
@@ -255,22 +256,6 @@ export class Presenter {
     this.modalView.open();
   };
 
-  private getBasketState = (): {
-    basketItems: IProduct[];
-    total: number;
-    isBasketEmpty: boolean;
-  } => {
-    const basketItems = this.basketModel.getItems();
-    const total = this.basketModel.getTotalPrice();
-    const isBasketEmpty = basketItems.length === 0;
-
-    return {
-      basketItems,
-      total,
-      isBasketEmpty,
-    };
-  };
-
   private buildBasketCardElements = (items: IProduct[]): HTMLElement[] => {
     return items.map((item, index) => {
       const basketCardView = new CardBasket(
@@ -311,8 +296,10 @@ export class Presenter {
   private showBasket = () => {
     this.isBasketViewOpen = true;
 
-    const { basketItems, total, isBasketEmpty } = this.getBasketState();
+    const basketItems = this.basketModel.getItems();
     const cardElements = this.buildBasketCardElements(basketItems);
+    const total = this.basketModel.getTotalPrice();
+    const isBasketEmpty = basketItems.length === 0;
 
     this.renderBasketModal(cardElements, total, isBasketEmpty);
   };
@@ -325,6 +312,9 @@ export class Presenter {
     this.showBasket();
   };
 
+  private collectErrors = (...messages: Array<string | undefined>): string[] =>
+    messages.filter((message): message is string => message !== undefined);
+
   private getOrderStepState(): StepState<{
     payment: TPayment | null;
     address: string;
@@ -332,9 +322,7 @@ export class Presenter {
     const { payment, address } = this.buyerModel.getData();
     const allErrors = this.buyerModel.validate();
 
-    const errors = [allErrors.payment, allErrors.address].filter(
-      (message): message is string => message !== undefined
-    );
+    const errors = this.collectErrors(allErrors.payment, allErrors.address);
 
     const valid =
       errors.length === 0 && payment !== null && address.trim().length > 0;
@@ -353,9 +341,7 @@ export class Presenter {
     const { email, phone } = this.buyerModel.getData();
     const allErrors = this.buyerModel.validate();
 
-    const errors = [allErrors.email, allErrors.phone].filter(
-      (message): message is string => message !== undefined
-    );
+    const errors = this.collectErrors(allErrors.email, allErrors.phone);
 
     const valid =
       errors.length === 0 && email.trim().length > 0 && phone.trim().length > 0;
@@ -410,7 +396,7 @@ export class Presenter {
     this.showModalContent(content);
   };
 
-  private renderSuccessStep(total: number) {
+  private renderSuccessStep = (total: number) => {
     const successView = new OrderSuccess(
       cloneTemplate(this.templates.success),
       this.events
@@ -423,7 +409,7 @@ export class Presenter {
     this.contactsFormView = null;
     this.basketModel.clear();
     this.buyerModel.clear();
-  }
+  };
 
   private submitOrder = async (): Promise<void> => {
     if (this.isSubmittingOrder) return;
@@ -432,9 +418,18 @@ export class Presenter {
     const items = this.basketModel.getItems();
     const total = this.basketModel.getTotalPrice();
 
-    if (buyer.payment === null) return;
+    if (buyer.payment === null) {
+      const contactsStep = this.getContactsStepState();
+      this.renderContactsStep({
+        ...contactsStep,
+        valid: false,
+        errors: [...contactsStep.errors, 'Выберите способ оплаты'],
+      });
+      this.currentCheckoutStep = 'contacts';
+      return;
+    }
 
-    const orderData = {
+    const orderData: OrderRequest = {
       payment: buyer.payment,
       email: buyer.email,
       phone: buyer.phone,
@@ -443,8 +438,8 @@ export class Presenter {
       total,
     };
 
+    this.isSubmittingOrder = true;
     try {
-      this.isSubmittingOrder = true;
       await this.webLarekApi.postOrder(orderData);
       this.renderSuccessStep(total);
     } catch {
@@ -496,32 +491,40 @@ export class Presenter {
     }
   };
 
-  private handleFormSubmitTriggered = ({ form }: FormSubmitTriggeredEvent) => {
-    if (form === 'order') {
-      const orderStep = this.getOrderStepState();
+  private handleOrderFormSubmit = () => {
+    const orderStep = this.getOrderStepState();
 
-      if (!orderStep.valid) {
-        this.renderOrderStep(orderStep);
-        this.currentCheckoutStep = 'order';
-        return;
-      }
+    if (!orderStep.valid) {
+      this.renderOrderStep(orderStep);
+      this.currentCheckoutStep = 'order';
+      return;
+    }
 
-      const contactsStep = this.getContactsStepState();
+    const contactsStep = this.getContactsStepState();
+    this.renderContactsStep(contactsStep);
+    this.currentCheckoutStep = 'contacts';
+  };
+
+  private handleContactsFormSubmit = () => {
+    const contactsStep = this.getContactsStepState();
+
+    if (!contactsStep.valid) {
       this.renderContactsStep(contactsStep);
       this.currentCheckoutStep = 'contacts';
       return;
     }
 
+    void this.submitOrder();
+  };
+
+  private handleFormSubmitTriggered = ({ form }: FormSubmitTriggeredEvent) => {
+    if (form === 'order') {
+      this.handleOrderFormSubmit();
+      return;
+    }
+
     if (form === 'contacts') {
-      const contactsStep = this.getContactsStepState();
-
-      if (!contactsStep.valid) {
-        this.renderContactsStep(contactsStep);
-        this.currentCheckoutStep = 'contacts';
-        return;
-      }
-
-      void this.submitOrder();
+      this.handleContactsFormSubmit();
     }
   };
 
