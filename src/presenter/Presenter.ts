@@ -17,8 +17,11 @@ import type {
   BasketStateChangedEvent,
   ProductSelectionChangedEvent,
   ProductsListChangedEvent,
+  FormFieldChangedEvent,
 } from '../types/events';
 import { cloneTemplate } from '../utils/utils';
+import { OrderSuccess } from '../components/view/order-success/OrderSuccess';
+import { FormContacts } from '../components/view/forms/FormContacts';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -100,7 +103,10 @@ export class Presenter {
     this.events.on('basket:icon-clicked', this.handleBasketIconClick);
 
     this.events.on('basket:checkout-clicked', this.handleBasketCheckoutClick);
-    this.events.on('form:field-changed', this.handleFormFieldChanged);
+    this.events.on<FormFieldChangedEvent>(
+      'form:field-changed',
+      this.handleFormFieldChanged
+    );
     this.events.on('form:submit-triggered', this.handleFormSubmitTriggered);
     this.events.on('buyer:data-changed', this.handleBuyerDataChanged);
     this.events.on(
@@ -338,4 +344,24 @@ export class Presenter {
 
     this.showModalContent(content);
   };
+
+  private handleFormFieldChanged = ({
+    form,
+    field,
+    value,
+  }: FormFieldChangedEvent) => {
+    if (form != 'order' && form != 'contacts') return;
+
+    if (form === 'order') {
+      if (field === 'payment') {
+        this.buyerModel.setData({ payment: value });
+      }
+    }
+  };
+
+  private handleFormSubmitTriggered = () => {};
+
+  private handleBuyerDataChanged = () => {};
+
+  private handleOrderSuccessCloseClicked = () => {};
 }

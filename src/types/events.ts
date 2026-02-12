@@ -1,4 +1,4 @@
-import type { IBuyer, IProduct } from './index';
+import type { IBuyer, IProduct, TPayment } from './index';
 
 export interface ProductsListChangedEvent {
   products: IProduct[];
@@ -21,8 +21,14 @@ export interface FormSubmitTriggeredEvent {
   form: string;
 }
 
-export interface FormFieldChangedEvent {
-  form: string;
-  field: string;
-  value: string;
-}
+type OrderFieldChangedEvent =
+  | { field: 'payment'; value: TPayment }
+  | { field: 'address'; value: string };
+
+type ContactsFieldChangedEvent =
+  | { field: 'email'; value: string }
+  | { field: 'phone'; value: string };
+
+export type FormFieldChangedEvent =
+  | ({ form: 'order' } & OrderFieldChangedEvent)
+  | ({ form: 'contacts' } & ContactsFieldChangedEvent);
