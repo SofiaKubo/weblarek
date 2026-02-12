@@ -61,6 +61,7 @@ export class Presenter {
   private modalView: Modal;
   private headerView: Header;
   private isBasketViewOpen = false;
+  private currentCheckoutStep: 'order' | 'contacts' | null = null;
   private templates: {
     cardCatalog: HTMLTemplateElement;
     cardPreview: HTMLTemplateElement;
@@ -169,6 +170,7 @@ export class Presenter {
   private handleModalCloseTriggered = () => {
     this.modalView.close();
     this.isBasketViewOpen = false;
+    this.currentCheckoutStep = null;
   };
 
   private handleBasketIconClick = () => {
@@ -405,6 +407,7 @@ export class Presenter {
     this.isBasketViewOpen = false;
     const orderStep = this.getOrderStepState();
     this.renderOrderStep(orderStep);
+    this.currentCheckoutStep = 'order';
   };
 
   private handleFormFieldChanged = ({
@@ -436,11 +439,13 @@ export class Presenter {
 
       if (!orderStep.valid) {
         this.renderOrderStep(orderStep);
+        this.currentCheckoutStep = 'order';
         return;
       }
 
       const contactsStep = this.getContactsStepState();
       this.renderContactsStep(contactsStep);
+      this.currentCheckoutStep = 'contacts';
       return;
     }
 
@@ -449,12 +454,24 @@ export class Presenter {
 
       if (!contactsStep.valid) {
         this.renderContactsStep(contactsStep);
+        this.currentCheckoutStep = 'contacts';
         return;
       }
     }
   };
 
-  private handleBuyerDataChanged = () => {};
+  private handleBuyerDataChanged = () => {
+    if (this.currentCheckoutStep === 'order') {
+      const orderStep = this.getOrderStepState();
+      this.renderOrderStep(orderStep);
+      return;
+    }
+
+    if (this.currentCheckoutStep === 'contacts') {
+      const contactsStep = this.getContactsStepState();
+      this.renderContactsStep(contactsStep);
+    }
+  };
 
   private handleOrderSuccessCloseClicked = () => {};
 }
