@@ -28,7 +28,7 @@ export class FormOrder extends FormBase {
 
     this.cardButton.addEventListener('click', () => {
       events.emit<FormFieldChangedEvent>('form:field-changed', {
-        form: this.formElement.name,
+        form: 'order',
         field: 'payment',
         value: 'card',
       });
@@ -36,7 +36,7 @@ export class FormOrder extends FormBase {
 
     this.cashButton.addEventListener('click', () => {
       events.emit<FormFieldChangedEvent>('form:field-changed', {
-        form: this.formElement.name,
+        form: 'order',
         field: 'payment',
         value: 'cash',
       });
@@ -52,3 +52,4 @@ export class FormOrder extends FormBase {
     this.addressInput.value = value;
   }
 }
+

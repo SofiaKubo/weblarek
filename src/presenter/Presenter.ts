@@ -20,8 +20,6 @@ import type {
   FormFieldChangedEvent,
 } from '../types/events';
 import { cloneTemplate } from '../utils/utils';
-import { OrderSuccess } from '../components/view/order-success/OrderSuccess';
-import { FormContacts } from '../components/view/forms/FormContacts';
 
 type PresenterDependencies = {
   events: IEvents;
@@ -350,11 +348,20 @@ export class Presenter {
     field,
     value,
   }: FormFieldChangedEvent) => {
-    if (form != 'order' && form != 'contacts') return;
-
     if (form === 'order') {
       if (field === 'payment') {
         this.buyerModel.setData({ payment: value });
+      } else if (field === 'address') {
+        this.buyerModel.setData({ address: value });
+      }
+      return;
+    }
+
+    if (form === 'contacts') {
+      if (field === 'email') {
+        this.buyerModel.setData({ email: value });
+      } else if (field === 'phone') {
+        this.buyerModel.setData({ phone: value });
       }
     }
   };
@@ -363,5 +370,10 @@ export class Presenter {
 
   private handleBuyerDataChanged = () => {};
 
+
   private handleOrderSuccessCloseClicked = () => {};
+
 }
+
+
+
