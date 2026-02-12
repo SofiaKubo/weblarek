@@ -100,6 +100,13 @@ export class Presenter {
     this.events.on('basket:icon-clicked', this.handleBasketIconClick);
 
     this.events.on('basket:checkout-clicked', this.handleBasketCheckoutClick);
+    this.events.on('form:field-changed', this.handleFormFieldChanged);
+    this.events.on('form:submit-triggered', this.handleFormSubmitTriggered);
+    this.events.on('buyer:data-changed', this.handleBuyerDataChanged);
+    this.events.on(
+      'order-success:close-clicked',
+      this.handleOrderSuccessCloseClicked
+    );
     this.events.on('modal:close-triggered', this.handleModalCloseTriggered);
   }
 
@@ -332,5 +339,3 @@ export class Presenter {
     this.showModalContent(content);
   };
 }
-
-
