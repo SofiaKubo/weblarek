@@ -62,6 +62,7 @@ export class Presenter {
   private modalView: Modal;
   private headerView: Header;
   private isBasketViewOpen = false;
+  private isSubmittingOrder = false;
   private currentCheckoutStep: 'order' | 'contacts' | null = null;
   private orderFormView: FormOrder | null = null;
   private contactsFormView: FormContacts | null = null;
@@ -418,11 +419,15 @@ export class Presenter {
     successView.total = total;
     this.showModalContent(successView.render());
     this.currentCheckoutStep = null;
+    this.orderFormView = null;
+    this.contactsFormView = null;
     this.basketModel.clear();
     this.buyerModel.clear();
   }
 
   private submitOrder = async (): Promise<void> => {
+    if (this.isSubmittingOrder) return;
+
     const buyer = this.buyerModel.getData();
     const items = this.basketModel.getItems();
     const total = this.basketModel.getTotalPrice();
@@ -439,6 +444,7 @@ export class Presenter {
     };
 
     try {
+      this.isSubmittingOrder = true;
       await this.webLarekApi.postOrder(orderData);
       this.renderSuccessStep(total);
     } catch {
@@ -451,6 +457,9 @@ export class Presenter {
           'Не удалось оформить заказ. Попробуйте ещё раз.',
         ],
       });
+      this.currentCheckoutStep = 'contacts';
+    } finally {
+      this.isSubmittingOrder = false;
     }
   };
 
